@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>モーマンタイム 傑作組み合わせ効果（戦闘中逆引き）</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border-color: #334155;
+            --tag-buff: #065f46;
+            --tag-debuff: #991b1b;
+            --tag-heal: #1e40af;
+            --tag-dmg: #854d0e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 16px;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding-bottom: 60px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-sub);
+        }
+
+        .search-container {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-color);
+            padding: 10px 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border-radius: 8px;
+            border: 2px solid var(--accent-color);
+            background-color: var(--card-bg);
+            color: #fff;
+            outline: none;
+        }
+
+        .search-box::placeholder {
+            color: #64748b;
+        }
+
+        .filters {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 0 5px 0;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            color: var(--text-sub);
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn.active {
+            background-color: var(--accent-color);
+            color: #0f172a;
+            font-weight: bold;
+            border-color: var(--accent-color);
+        }
+
+        .count-info {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin: 10px 0;
+            text-align: right;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .combo-name {
+            font-weight: bold;
+            font-size: 1.05rem;
+            color: #e2e8f0;
+        }
+
+        .timing-tag {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background-color: #334155;
+            color: #38bdf8;
+            font-weight: bold;
+        }
+
+        .effect-desc {
+            font-size: 0.95rem;
+            line-height: 1.4;
+            color: #f8fafc;
+            background-color: rgba(0,0,0,0.2);
+            padding: 8px;
+            border-radius: 4px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .stat-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            border-top: 1px dashed var(--border-color);
+            padding-top: 6px;
+        }
+
+        .items-list {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        .items-title {
+            color: #64748b;
+        }
+
+        /* Highlight match */
+        mark {
+            background-color: #f59e0b;
+            color: #000;
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>モーマンタイム 傑作効果逆引き</h1>
+    <p class="subtitle">「このステータス変化ってどの組み合わせ？」を戦闘中に即検索</p>
+</header>
+
+<div class="search-container">
+    <input type="text" id="searchInput" class="search-box" placeholder="効果・数値・タイミングで検索（例: シールド, 5%, 戦闘開始時, 軽減）">
+    
+    <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('all')">すべて</button>
+        <button class="filter-btn" onclick="setFilter('開始')">戦闘開始時</button>
+        <button class="filter-btn" onclick="setFilter('ターン')">ターン経過</button>
+        <button class="filter-btn" onclick="setFilter('バフ')">バフ/軽減</button>
+        <button class="filter-btn" onclick="setFilter('ダメージ')">直接ダメージ</button>
+        <button class="filter-btn" onclick="setFilter('回復')">回復/シールド</button>
+        <button class="filter-btn" onclick="setFilter('デバフ')">デバフ/弱体</button>
+    </div>
+</div>
+
+<div class="count-info" id="countInfo">該当: 33件</div>
+
+<div class="grid" id="cardGrid"></div>
+
+<script>
+const data = [
+    { name: "文苑新話", timing: "4ターン目", effect: "味方のダメージ軽減+5%", star1: "3%", max: "32%", duration: "2ターン", items: ["泊泰淮", "涼州詞", "破陣子", "四書集注"] },
+    { name: "文学級義", timing: "4ターン目", effect: "味方のダメージバフ+5%", star1: "3%", max: "32%", duration: "2ターン", items: ["諫逐客書", "女尉馬", "打金枝", "納蘭詞集"] },
+    { name: "弄文舞墨", timing: "6ターン目", effect: "味方の最大体力の5%分回復", star1: "1%", max: "14%", duration: "-", items: ["報任安書", "五柳先生伝", "孔雀の舞", "雷峰塔"] },
+    { name: "清高雅泰", timing: "6ターン目", effect: "敵に攻撃力の50%のダメージ", star1: "10%", max: "140%", duration: "-", items: ["貞観政要", "捕蛇者説", "踏歌", "蓮花の舞"] },
+    { name: "学養札記", timing: "3ターンごと", effect: "味方のダメージ軽減+5%", star1: "3%", max: "32%", duration: "2ターン", items: ["長恨歌", "徐霞客遊記", "歩輦図", "漢宮春暁図"] },
+    { name: "大音は希声なり", timing: "3ターンごと", effect: "味方のダメージバフ+5%", star1: "3%", max: "32%", duration: "2ターン", items: ["登幽州台歌", "琵琶行", "漁舟唱晩", "平沙落雁"] },
+    { name: "梨園の春秋", timing: "4ターンごと", effect: "味方の最大体力の5%分回復", star1: "1%", max: "14%", duration: "-", items: ["梁山伯と祝英台", "趙氏孤児", "漢宮秋", "錦瑟"] },
+    { name: "霓裳羽衣", timing: "4ターンごと", effect: "敵に攻撃力の80%のダメージ", star1: "12%", max: "188%", duration: "-", items: ["盤鼓の舞", "獅子舞", "長生殿", "桃花扇"] },
+    { name: "風和山水", timing: "戦闘開始時", effect: "敵の回復弱体化+10%", star1: "4%", max: "46%", duration: "戦闘終了まで", items: ["将進酒", "芙蓉錦鶏図", "渓山行旅図", "剣器舞"] },
+    { name: "書剣双絶", timing: "2ターンごと（体力50%以上）", effect: "敵に現在の体力の2%のダメージ", star1: "1%", max: "11%", duration: "-", items: ["観滄海", "満江紅", "梅花三弄", "陽関三畳"] },
+    { name: "玉振金声", timing: "敵クリティカル発動時", effect: "ダメージが-8%", star1: "-3%", max: "-35%", duration: "-", items: ["登高", "蜀道難", "塩鉄論", "朱元思へ"] },
+    { name: "文学の精華", timing: "戦闘開始時", effect: "10%の攻撃低下耐性を獲得（自身の攻撃力は最大10%まで低下）", star1: "5%", max: "55%", duration: "戦闘終了まで", items: ["葬花", "勅勒歌", "群英会", "永楽大典"] },
+    { name: "膾炙人口", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-5%", star1: "-2%", max: "-23%", duration: "戦闘終了まで", items: ["櫟林英掛飾", "天仙配", "儒林外史", "容斎随筆"] },
+    { name: "伝説の春秋", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-5%", star1: "-2%", max: "-23%", duration: "戦闘終了まで", items: ["覇王別姫", "白蛇伝", "呂氏春秋", "伝習録"] },
+    { name: "愚喜こもごも", timing: "戦闘開始時", effect: "敵を攻撃する際に削る装甲値+10%", star1: "5%", max: "55%", duration: "戦闘終了まで", items: ["入陣曲", "竇娥冤", "西遊記", "牡丹亭"] },
+    { name: "芸術界の至宝", timing: "戦闘開始時", effect: "攻撃を受けた際に減少する装甲値-10%", star1: "-5%", max: "-55%", duration: "戦闘終了まで", items: ["紫荊花", "洛神賦図", "百駿図", "胡旋舞"] },
+    { name: "雅楽正声", timing: "1ターン中複数回ダメージ受領時", effect: "最初のダメージを除き残りのダメージは5%吸収", star1: "1%", max: "14%", duration: "-", items: ["陋室銘", "霓裳曲", "高山流水", "秦王破陣楽"] },
+    { name: "文心彫龍", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", star1: "5%", max: "55%", duration: "-", items: ["陳情表", "滕王閣序", "師説", "愛蓮説"] },
+    { name: "千古の名曲", timing: "被ダメージ時（ダメージ吸収）", effect: "敵がダメージを吸収する際の吸収量-15%", star1: "-5%", max: "-60%", duration: "-", items: ["岳陽楼記", "桃花源記", "阿房宮賦", "赤壁賦"] },
+    { name: "経世済民", timing: "パッシブ", effect: "味方の特殊ダメージ軽減+10%（反撃、跳ね返し、異常ダメージ-10%）", star1: "4%", max: "46%", duration: "-", items: ["三字経", "春秋", "斉民要術", "海国図志"] },
+    { name: "解釈と訓詁", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", star1: "5%", max: "55%", duration: "-", items: ["左伝", "礼記", "尚書", "夢渓筆談"] },
+    { name: "諸子の叡智", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-12%", star1: "-3%", max: "-39%", duration: "戦闘終了まで", items: ["世説新語", "孟子", "荘子", "墨子"] },
+    { name: "天下を制す", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-12%", star1: "-3%", max: "-39%", duration: "戦闘終了まで", items: ["漢書", "天工開物", "水経注", "戦国策"] },
+    { name: "温陵雅韻", timing: "パッシブ", effect: "味方のダメージ軽減+6%", star1: "3%", max: "33%", duration: "戦闘終了まで", items: ["落龍滂", "四時景", "芭蕉記"] },
+    { name: "絵画の名手", timing: "威率が敵より上", effect: "敵に攻撃力の100%のダメージ", star1: "20%", max: "280%", duration: "-", items: ["水調歌頭", "女史箴図", "富春山居図", "五牛図"] },
+    { name: "詩歌管弦", timing: "最大体力を超える回復時", effect: "超過分の10%をシールド値に変換", star1: "5%", max: "55%", duration: "-", items: ["孔雀東南飛", "木蘭詩", "春江花月夜", "待ち伏せ"] },
+    { name: "戦略共鳴", timing: "パッシブ", effect: "味方のダメージバフ+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["三国志演義", "孫子兵法"] },
+    { name: "文武両道", timing: "パッシブ", effect: "味方のダメージ軽減+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["三十六計", "蘭亭序"] },
+    { name: "歴史に名を刻む", timing: "戦闘開始時", effect: "最大体力の20%分のシールド値を獲得", star1: "10%", max: "110%", duration: "-", items: ["史記", "資治通鑑"] },
+    { name: "文才墨粋", timing: "毎ターン20%の確率", effect: "味方のデバフを1つ解除（傑作で付与されたデバフを除く）", star1: "7%", max: "83%", duration: "-", items: ["出師表", "楚辞"] },
+    { name: "君臣同心", timing: "パッシブ", effect: "味方のダメージ軽減+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["牧誓", "楊家将"] },
+    { name: "天宇雲沙", timing: "パッシブ", effect: "味方のダメージバフ+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["念奴嬌", "山海経"] },
+    { name: "龍韜虎略", timing: "パッシブ", effect: "味方のダメージ軽減+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["六韜", "三略"] },
+    { name: "玉に映る夢", timing: "パッシブ", effect: "味方のダメージバフ+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["都華如夢録", "青玉案・元夕"] },
+    { name: "救世奇謀", timing: "パッシブ", effect: "味方のダメージ軽減+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["傷寒雑病論", "十勝十敗論"] },
+    { name: "一夢の芳華", timing: "パッシブ", effect: "味方のダメージバフ+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["紅楼夢", "虞美人"] },
+    { name: "史詩流芳", timing: "パッシブ", effect: "味方のダメージ軽減+20%", star1: "10%", max: "110%", duration: "戦闘終了まで", items: ["後漢書", "？？？"] }
+];
+
+let activeFilter = 'all';
+
+function renderCards() {
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const grid = document.getElementById('cardGrid');
+    grid.innerHTML = '';
+
+    const filtered = data.filter(item => {
+        // Text Match
+        const matchText = item.name.toLowerCase().includes(query) ||
+                          item.effect.toLowerCase().includes(query) ||
+                          item.timing.toLowerCase().includes(query) ||
+                          item.items.some(i => i.toLowerCase().includes(query));
+
+        if (!matchText) return false;
+
+        // Filter Match
+        if (activeFilter === 'all') return true;
+        if (activeFilter === '開始') return item.timing.includes('開始');
+        if (activeFilter === 'ターン') return item.timing.includes('ターン');
+        if (activeFilter === 'バフ') return item.effect.includes('バフ') || item.effect.includes('軽減');
+        if (activeFilter === 'ダメージ') return item.effect.includes('ダメージ') && !item.effect.includes('バフ') && !item.effect.includes('軽減');
+        if (activeFilter === '回復') return item.effect.includes('回復') || item.effect.includes('シールド');
+        if (activeFilter === 'デバフ') return item.effect.includes('弱体') || item.effect.includes('低下') || item.effect.includes('吸収量-') || item.effect.includes('装甲');
+
+        return true;
+    });
+
+    document.getElementById('countInfo').innerText = `該当: ${filtered.length}件`;
+
+    filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="combo-name">${item.name}</span>
+                <span class="timing-tag">${item.timing}</span>
+            </div>
+            <div class="effect-desc">${item.effect}</div>
+            <div class="stat-detail">
+                <span>星1時: <strong>${item.star1}</strong></span>
+                <span>最大値: <strong style="color:#38bdf8">${item.max}</strong></span>
+                <span>持続: ${item.duration}</span>
+            </div>
+            <div class="items-list">
+                <span class="items-title">構成:</span> ${item.items.join(' / ')}
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function setFilter(filter) {
+    activeFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.includes(filter) || (filter==='all' && btn.innerText==='すべて'));
+    });
+    renderCards();
+}
+
+document.getElementById('searchInput').addEventListener('input', renderCards);
+
+// Initial Render
+renderCards();
+</script>
+</body>
+</html>
