@@ -34,6 +34,10 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             background-color: var(--bg-color);
             background-image: 
@@ -49,7 +53,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             padding-top: 10px;
         }
 
@@ -67,6 +71,39 @@
             font-size: 0.8rem;
             color: var(--text-secondary);
         }
+
+        /* ジャンプボタンナビゲーション */
+        .jump-nav {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .jump-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .jump-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
+            color: #ffffff;
+            border-color: var(--accent-cyan);
+        }
+
+        .jump-btn.start-btn { border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; }
+        .jump-btn.turn-btn { border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+        .jump-btn.passive-btn { border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
+        .jump-btn.cond-btn { border-color: rgba(245, 158, 11, 0.4); color: #fde047; }
 
         .sticky-header {
             position: sticky;
@@ -104,6 +141,7 @@
 
         .phase-section {
             margin-bottom: 28px;
+            scroll-margin-top: 110px;
         }
 
         .phase-header {
@@ -248,6 +286,13 @@
     <p class="subtitle">戦闘中のステータス変化を発動タイミング順から検索</p>
 </header>
 
+<div class="jump-nav">
+    <a href="#section-start" class="jump-btn start-btn">開戦時</a>
+    <a href="#section-turn" class="jump-btn turn-btn">ターン判定</a>
+    <a href="#section-passive" class="jump-btn passive-btn">パッシブ</a>
+    <a href="#section-cond" class="jump-btn cond-btn">条件発動</a>
+</div>
+
 <div class="sticky-header">
     <input type="text" id="searchInput" class="search-box" placeholder="効果・数値・言葉で検索（例: シールド, 軽減, 5%, 装甲）">
 </div>
@@ -257,7 +302,7 @@
 <script>
 const phaseData = [
     {
-        phaseId: "start",
+        phaseId: "section-start",
         phaseTitle: "1. 戦闘開始時に発動",
         phaseBadge: "開戦時",
         class: "start",
@@ -276,7 +321,7 @@ const phaseData = [
         ]
     },
     {
-        phaseId: "turn",
+        phaseId: "section-turn",
         phaseTitle: "2. ターン進行に伴い発動",
         phaseBadge: "ターン判定",
         class: "turn",
@@ -294,7 +339,7 @@ const phaseData = [
         ]
     },
     {
-        phaseId: "passive",
+        phaseId: "section-passive",
         phaseTitle: "3. 常時・パッシブ発動（補正）",
         phaseBadge: "パッシブ",
         class: "passive",
@@ -313,7 +358,7 @@ const phaseData = [
         ]
     },
     {
-        phaseId: "cond",
+        phaseId: "section-cond",
         phaseTitle: "4. 特定アクショントリガー",
         phaseBadge: "条件発動",
         class: "cond",
@@ -347,6 +392,7 @@ function renderContent() {
 
             const section = document.createElement('div');
             section.className = 'phase-section';
+            section.id = phase.phaseId;
 
             let cardsHtml = filteredItems.map(item => `
                 <div class="card r-${item.rarity}">
