@@ -73,7 +73,6 @@
             color: var(--text-secondary);
         }
 
-        /* ジャンプボタンナビゲーション */
         .jump-nav {
             display: flex;
             gap: 8px;
@@ -180,7 +179,6 @@
         .phase-header.passive .phase-badge { background: var(--section-passive); }
         .phase-header.cond .phase-badge { background: var(--section-cond); }
 
-        /* セクション横のトップへ戻るボタン */
         .back-to-top-btn {
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -242,7 +240,6 @@
             letter-spacing: 0.02em;
         }
 
-        /* レア度別組合せ名の文字色 */
         .r-red .combo-name { color: #fca5a5; }
         .r-yellow .combo-name { color: #fde047; }
         .r-purple .combo-name { color: #e9d5ff; }
@@ -287,15 +284,22 @@
         }
 
         .items-info {
-            font-size: 0.75rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
             border-top: 1px dashed rgba(255, 255, 255, 0.08);
             padding-top: 6px;
             margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            line-height: 1.4;
         }
+
+        /* 構成傑作の個別カラー */
+        .item-tag {
+            font-weight: 600;
+        }
+        .item-tag.c-red { color: #fca5a5; }
+        .item-tag.c-yellow { color: #fde047; }
+        .item-tag.c-purple { color: #d8b4fe; }
+        .item-tag.c-cyan { color: #67e8f9; }
 
         .no-result {
             text-align: center;
@@ -333,17 +337,17 @@ const phaseData = [
         phaseBadge: "開戦時",
         class: "start",
         items: [
-            { name: "歴史に名を刻む", rarity: "red", timing: "戦闘開始時", effect: "最大体力の20%分のシールド値を獲得", starAdd: "+10%", max: "110%", duration: "-", items: ["史記", "資治通鑑"] },
-            { name: "文心彫龍", rarity: "yellow", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", duration: "-", items: ["陳情表", "滕王閣序", "師説", "愛蓮説"] },
-            { name: "解釈と訓詁", rarity: "yellow", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", duration: "-", items: ["左伝", "礼記", "尚書", "夢渓筆談"] },
-            { name: "文学の精華", rarity: "yellow", timing: "戦闘開始時", effect: "10%の攻撃低下耐性を獲得（自身の攻撃力は最大10%まで低下）", starAdd: "+5%", max: "55%", duration: "戦闘終了まで", items: ["葬花", "勅勒歌", "群英会", "永楽大典"] },
-            { name: "愚喜こもごも", rarity: "yellow", timing: "戦闘開始時", effect: "敵を攻撃する際に削る装甲値+10%", starAdd: "+5%", max: "55%", duration: "戦闘終了まで", items: ["入陣曲", "竇娥冤", "西遊記", "牡丹亭"] },
-            { name: "芸術界の至宝", rarity: "yellow", timing: "戦闘開始時", effect: "攻撃を受けた際に減少する装甲値-10%", starAdd: "-5%", max: "-55%", duration: "戦闘終了まで", items: ["紫荊花", "洛神賦図", "百駿図", "胡旋舞"] },
-            { name: "諸子の叡智", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-12%", starAdd: "-3%", max: "-39%", duration: "戦闘終了まで", items: ["世説新語", "孟子", "荘子", "墨子"] },
-            { name: "天下を制す", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-12%", starAdd: "-3%", max: "-39%", duration: "戦闘終了まで", items: ["漢書", "天工開物", "水経注", "戦国策"] },
-            { name: "膾炙人口", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-5%", starAdd: "-2%", max: "-23%", duration: "戦闘終了まで", items: ["櫟林英掛飾", "天仙配", "儒林外史", "容斎随筆"] },
-            { name: "伝説の春秋", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-5%", starAdd: "-2%", max: "-23%", duration: "戦闘終了まで", items: ["覇王別姫", "白蛇伝", "呂氏春秋", "伝習録"] },
-            { name: "風和山水", rarity: "yellow", timing: "戦闘開始時", effect: "敵の回復弱体化+10%", starAdd: "+4%", max: "46%", duration: "戦闘終了まで", items: ["将進酒", "芙蓉錦鶏図", "渓山行旅図", "剣器舞"] }
+            { name: "歴史に名を刻む", rarity: "red", timing: "戦闘開始時", effect: "最大体力の20%分のシールド値を獲得", starAdd: "+10%", max: "110%", duration: "-", items: [{ name: "史記", color: "red" }, { name: "資治通鑑", color: "red" }] },
+            { name: "文心彫龍", rarity: "yellow", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", duration: "-", items: [{ name: "陳情表", color: "yellow" }, { name: "滕王閣序", color: "yellow" }, { name: "師説", color: "yellow" }, { name: "愛蓮説", color: "yellow" }] },
+            { name: "解釈と訓詁", rarity: "yellow", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", duration: "-", items: [{ name: "左伝", color: "yellow" }, { name: "礼記", color: "yellow" }, { name: "尚書", color: "yellow" }, { name: "夢渓筆談", color: "yellow" }] },
+            { name: "文学の精華", rarity: "yellow", timing: "戦闘開始時", effect: "10%の攻撃低下耐性を獲得（自身の攻撃力は最大10%まで低下）", starAdd: "+5%", max: "55%", duration: "戦闘終了まで", items: [{ name: "葬花", color: "yellow" }, { name: "勅勒歌", color: "yellow" }, { name: "群英会", color: "yellow" }, { name: "永楽大典", color: "yellow" }] },
+            { name: "愚喜こもごも", rarity: "yellow", timing: "戦闘開始時", effect: "敵を攻撃する際に削る装甲値+10%", starAdd: "+5%", max: "55%", duration: "戦闘終了まで", items: [{ name: "入陣曲", color: "yellow" }, { name: "竇娥冤", color: "yellow" }, { name: "西遊記", color: "yellow" }, { name: "牡丹亭", color: "yellow" }] },
+            { name: "芸術界の至宝", rarity: "yellow", timing: "戦闘開始時", effect: "攻撃を受けた際に減少する装甲値-10%", starAdd: "-5%", max: "-55%", duration: "戦闘終了まで", items: [{ name: "紫荊花", color: "yellow" }, { name: "洛神賦図", color: "yellow" }, { name: "百駿図", color: "yellow" }, { name: "胡旋舞", color: "yellow" }] },
+            { name: "諸子の叡智", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-12%", starAdd: "-3%", max: "-39%", duration: "戦闘終了まで", items: [{ name: "世説新語", color: "yellow" }, { name: "孟子", color: "yellow" }, { name: "荘子", color: "yellow" }, { name: "墨子", color: "yellow" }] },
+            { name: "天下を制す", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-12%", starAdd: "-3%", max: "-39%", duration: "戦闘終了まで", items: [{ name: "漢書", color: "yellow" }, { name: "天工開物", color: "yellow" }, { name: "水経注", color: "yellow" }, { name: "戦国策", color: "yellow" }] },
+            { name: "膾炙人口", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-5%", starAdd: "-2%", max: "-23%", duration: "戦闘終了まで", items: [{ name: "櫟林英掛飾", color: "yellow" }, { name: "天仙配", color: "yellow" }, { name: "儒林外史", color: "yellow" }, { name: "容斎随筆", color: "yellow" }] },
+            { name: "伝説の春秋", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-5%", starAdd: "-2%", max: "-23%", duration: "戦闘終了まで", items: [{ name: "覇王別姫", color: "yellow" }, { name: "白蛇伝", color: "yellow" }, { name: "呂氏春秋", color: "yellow" }, { name: "伝習録", color: "yellow" }] },
+            { name: "風和山水", rarity: "yellow", timing: "戦闘開始時", effect: "敵の回復弱体化+10%", starAdd: "+4%", max: "46%", duration: "戦闘終了まで", items: [{ name: "将進酒", color: "yellow" }, { name: "芙蓉錦鶏図", color: "yellow" }, { name: "渓山行旅図", color: "yellow" }, { name: "剣器舞", color: "yellow" }] }
         ]
     },
     {
@@ -352,16 +356,16 @@ const phaseData = [
         phaseBadge: "ターン判定",
         class: "turn",
         items: [
-            { name: "学養札記", rarity: "purple", timing: "3ターンごと", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: ["長恨歌", "徐霞客遊記", "歩輦図", "漢宮春暁図"] },
-            { name: "大音は希声なり", rarity: "purple", timing: "3ターンごと", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: ["登幽州台歌", "琵琶行", "漁舟唱晩", "平沙落雁"] },
-            { name: "文苑新話", rarity: "purple", timing: "4ターン目", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: ["泊泰淮", "涼州詞", "破陣子", "四書集注"] },
-            { name: "文学級義", rarity: "purple", timing: "4ターン目", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: ["諫逐客書", "女尉馬", "打金枝", "納蘭詞集"] },
-            { name: "梨園の春秋", rarity: "purple", timing: "4ターンごと", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", duration: "-", items: ["梁山伯と祝英台", "趙氏孤児", "漢宮秋", "錦瑟"] },
-            { name: "霓裳羽衣", rarity: "purple", timing: "4ターンごと", effect: "敵に攻撃力の80%のダメージ", starAdd: "+12%", max: "188%", duration: "-", items: ["盤鼓の舞", "獅子舞", "長生殿", "桃花扇"] },
-            { name: "弄文舞墨", rarity: "purple", timing: "6ターン目", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", duration: "-", items: ["報任安書", "五柳先生伝", "孔雀の舞", "雷峰塔"] },
-            { name: "清高雅泰", rarity: "purple", timing: "6ターン目", effect: "敵に攻撃力の50%のダメージ", starAdd: "+10%", max: "140%", duration: "-", items: ["貞観政要", "捕蛇者説", "踏歌", "蓮花の舞"] },
-            { name: "書剣双絶", rarity: "yellow", timing: "2ターンごと(HP50%以上)", effect: "敵に現在の体力の2%のダメージ", starAdd: "+1%", max: "11%", duration: "-", items: ["観滄海", "満江紅", "梅花三弄", "陽関三畳"] },
-            { name: "文才墨粋", rarity: "red", timing: "毎ターン20%確率", effect: "味方のデバフを1つ解除（傑作デバフ除く）", starAdd: "+7%", max: "83%", duration: "-", items: ["出師表", "楚辞"] }
+            { name: "学養札記", rarity: "purple", timing: "3ターンごと", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "長恨歌", color: "purple" }, { name: "徐霞客遊記", color: "purple" }, { name: "歩輦図", color: "cyan" }, { name: "漢宮春暁図", color: "cyan" }] },
+            { name: "大音は希声なり", rarity: "purple", timing: "3ターンごと", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "登幽州台歌", color: "purple" }, { name: "琵琶行", color: "purple" }, { name: "漁舟唱晩", color: "cyan" }, { name: "平沙落雁", color: "cyan" }] },
+            { name: "文苑新話", rarity: "purple", timing: "4ターン目", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "泊泰淮", color: "cyan" }, { name: "涼州詞", color: "cyan" }, { name: "破陣子", color: "cyan" }, { name: "四書集注", color: "cyan" }] },
+            { name: "文学級義", rarity: "purple", timing: "4ターン目", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "諫逐客書", color: "cyan" }, { name: "女尉馬", color: "cyan" }, { name: "打金枝", color: "cyan" }, { name: "納蘭詞集", color: "cyan" }] },
+            { name: "梨園の春秋", rarity: "purple", timing: "4ターンごと", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", duration: "-", items: [{ name: "梁山伯と祝英台", color: "purple" }, { name: "趙氏孤児", color: "red" }, { name: "漢宮秋", color: "purple" }, { name: "錦瑟", color: "red" }] },
+            { name: "霓裳羽衣", rarity: "purple", timing: "4ターンごと", effect: "敵に攻撃力の80%のダメージ", starAdd: "+12%", max: "188%", duration: "-", items: [{ name: "盤鼓の舞", color: "purple" }, { name: "獅子舞", color: "red" }, { name: "長生殿", color: "purple" }, { name: "桃花扇", color: "purple" }] },
+            { name: "弄文舞墨", rarity: "purple", timing: "6ターン目", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", duration: "-", items: [{ name: "報任安書", color: "cyan" }, { name: "五柳先生伝", color: "cyan" }, { name: "孔雀の舞", color: "cyan" }, { name: "雷峰塔", color: "cyan" }] },
+            { name: "清高雅泰", rarity: "purple", timing: "6ターン目", effect: "敵に攻撃力の50%のダメージ", starAdd: "+10%", max: "140%", duration: "-", items: [{ name: "貞観政要", color: "cyan" }, { name: "捕蛇者説", color: "cyan" }, { name: "踏歌", color: "cyan" }, { name: "蓮花の舞", color: "cyan" }] },
+            { name: "書剣双絶", rarity: "yellow", timing: "2ターンごと(HP50%以上)", effect: "敵に現在の体力の2%のダメージ", starAdd: "+1%", max: "11%", duration: "-", items: [{ name: "観滄海", color: "yellow" }, { name: "満江紅", color: "purple" }, { name: "梅花三弄", color: "purple" }, { name: "陽関三畳", color: "yellow" }] },
+            { name: "文才墨粋", rarity: "red", timing: "毎ターン20%確率", effect: "味方のデバフを1つ解除（傑作デバフ除く）", starAdd: "+7%", max: "83%", duration: "-", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] }
         ]
     },
     {
@@ -370,17 +374,17 @@ const phaseData = [
         phaseBadge: "パッシブ",
         class: "passive",
         items: [
-            { name: "戦略共鳴", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["三国志演義", "孫子兵法"] },
-            { name: "天宇雲沙", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["念奴嬌", "山海経"] },
-            { name: "玉に映る夢", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["都華如夢録", "青玉案・元夕"] },
-            { name: "一夢の芳華", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["紅楼夢", "虞美人"] },
-            { name: "文武両道", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["三十六計", "蘭亭序"] },
-            { name: "君臣同心", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["牧誓", "楊家将"] },
-            { name: "龍韜虎略", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["六韜", "三略"] },
-            { name: "救世奇謀", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["傷寒雑病論", "十勝十敗論"] },
-            { name: "史詩流芳", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: ["後漢書", "？？？"] },
-            { name: "温陵雅韻", rarity: "cyan", timing: "パッシブ", effect: "味方のダメージ軽減+6%", starAdd: "+3%", max: "33%", duration: "戦闘終了まで", items: ["落龍滂", "四時景", "芭蕉記"] },
-            { name: "経世済民", rarity: "yellow", timing: "パッシブ", effect: "味方の特殊ダメージ軽減+10%（反撃/跳ね返し/異常ダメージ-10%）", starAdd: "+4%", max: "46%", duration: "-", items: ["三字経", "春秋", "斉民要術", "海国図志"] }
+            { name: "戦略共鳴", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "三国志演義", color: "red" }, { name: "孫子兵法", color: "red" }] },
+            { name: "天宇雲沙", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
+            { name: "玉に映る夢", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "都華如夢録", color: "red" }, { name: "青玉案・元夕", color: "yellow" }] },
+            { name: "一夢の芳華", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "紅楼夢", color: "red" }, { name: "虞美人", color: "red" }] },
+            { name: "文武両道", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "三十六計", color: "red" }, { name: "蘭亭序", color: "purple" }] },
+            { name: "君臣同心", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "牧誓", color: "red" }, { name: "楊家将", color: "red" }] },
+            { name: "龍韜虎略", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "六韜", color: "red" }, { name: "三略", color: "red" }] },
+            { name: "救世奇謀", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "傷寒雑病論", color: "red" }, { name: "十勝十敗論", color: "red" }] },
+            { name: "史詩流芳", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "後漢書", color: "red" }, { name: "？？？", color: "cyan" }] },
+            { name: "温陵雅韻", rarity: "cyan", timing: "パッシブ", effect: "味方のダメージ軽減+6%", starAdd: "+3%", max: "33%", duration: "戦闘終了まで", items: [{ name: "落龍滂", color: "yellow" }, { name: "四時景", color: "yellow" }, { name: "芭蕉記", color: "yellow" }] },
+            { name: "経世済民", rarity: "yellow", timing: "パッシブ", effect: "味方の特殊ダメージ軽減+10%（反撃/跳ね返し/異常ダメージ-10%）", starAdd: "+4%", max: "46%", duration: "-", items: [{ name: "三字経", color: "yellow" }, { name: "春秋", color: "yellow" }, { name: "斉民要術", color: "yellow" }, { name: "海国図志", color: "yellow" }] }
         ]
     },
     {
@@ -389,11 +393,11 @@ const phaseData = [
         phaseBadge: "条件発動",
         class: "cond",
         items: [
-            { name: "雅楽正声", rarity: "yellow", timing: "1ターン複数回被弾時", effect: "最初のダメージを除き残りのダメージは5%吸収", starAdd: "+1%", max: "14%", duration: "-", items: ["陋室銘", "霓裳曲", "高山流水", "秦王破陣楽"] },
-            { name: "玉振金声", rarity: "yellow", timing: "敵クリティカル発動時", effect: "受けるダメージが-8%", starAdd: "-3%", max: "-35%", duration: "-", items: ["登高", "蜀道難", "塩鉄論", "朱元思へ"] },
-            { name: "千古の名曲", rarity: "yellow", timing: "被ダメージ時(吸収)", effect: "敵がダメージを吸収する際の吸収量-15%", starAdd: "-5%", max: "-60%", duration: "-", items: ["岳陽楼記", "桃花源記", "阿房宮賦", "赤壁賦"] },
-            { name: "詩歌管弦", rarity: "purple", timing: "最大HP超え回復時", effect: "超過分の10%をシールド値に変換", starAdd: "+5%", max: "55%", duration: "-", items: ["孔雀東南飛", "木蘭詩", "春江花月夜", "待ち伏せ"] },
-            { name: "絵画の名手", rarity: "purple", timing: "威率が敵より上", effect: "敵に攻撃力の100%のダメージ", starAdd: "+20%", max: "280%", duration: "-", items: ["水調歌頭", "女史箴図", "富春山居図", "五牛図"] }
+            { name: "雅楽正声", rarity: "yellow", timing: "1ターン複数回被弾時", effect: "最初のダメージを除き残りのダメージは5%吸収", starAdd: "+1%", max: "14%", duration: "-", items: [{ name: "陋室銘", color: "yellow" }, { name: "霓裳曲", color: "yellow" }, { name: "高山流水", color: "yellow" }, { name: "秦王破陣楽", color: "yellow" }] },
+            { name: "玉振金声", rarity: "yellow", timing: "敵クリティカル発動時", effect: "受けるダメージが-8%", starAdd: "-3%", max: "-35%", duration: "-", items: [{ name: "登高", color: "yellow" }, { name: "蜀道難", color: "yellow" }, { name: "塩鉄論", color: "yellow" }, { name: "朱元思へ", color: "yellow" }] },
+            { name: "千古の名曲", rarity: "yellow", timing: "被ダメージ時(吸収)", effect: "敵がダメージを吸収する際の吸収量-15%", starAdd: "-5%", max: "-60%", duration: "-", items: [{ name: "岳陽楼記", color: "yellow" }, { name: "桃花源記", color: "yellow" }, { name: "阿房宮賦", color: "yellow" }, { name: "赤壁賦", color: "yellow" }] },
+            { name: "詩歌管弦", rarity: "purple", timing: "最大HP超え回復時", effect: "超過分の10%をシールド値に変換", starAdd: "+5%", max: "55%", duration: "-", items: [{ name: "孔雀東南飛", color: "yellow" }, { name: "木蘭詩", color: "yellow" }, { name: "春江花月夜", color: "purple" }, { name: "待ち伏せ", color: "purple" }] },
+            { name: "絵画の名手", rarity: "purple", timing: "威率が敵より上", effect: "敵に攻撃力の100%のダメージ", starAdd: "+20%", max: "280%", duration: "-", items: [{ name: "水調歌頭", color: "cyan" }, { name: "女史箴図", color: "purple" }, { name: "富春山居図", color: "purple" }, { name: "五牛図", color: "purple" }] }
         ]
     }
 ];
@@ -410,7 +414,7 @@ function renderContent() {
             return item.name.toLowerCase().includes(query) ||
                    item.effect.toLowerCase().includes(query) ||
                    item.timing.toLowerCase().includes(query) ||
-                   item.items.some(i => i.toLowerCase().includes(query));
+                   item.items.some(i => i.name.toLowerCase().includes(query));
         });
 
         if (filteredItems.length > 0) {
@@ -420,23 +424,27 @@ function renderContent() {
             section.className = 'phase-section';
             section.id = phase.phaseId;
 
-            let cardsHtml = filteredItems.map(item => `
-                <div class="card r-${item.rarity}">
-                    <div class="card-top">
-                        <span class="combo-name">${item.name}</span>
-                        <span class="timing-tag">${item.timing}</span>
+            let cardsHtml = filteredItems.map(item => {
+                const itemsHtml = item.items.map(i => `<span class="item-tag c-${i.color}">${i.name}</span>`).join(' / ');
+
+                return `
+                    <div class="card r-${item.rarity}">
+                        <div class="card-top">
+                            <span class="combo-name">${item.name}</span>
+                            <span class="timing-tag">${item.timing}</span>
+                        </div>
+                        <div class="effect-box">${item.effect}</div>
+                        <div class="stats-row">
+                            <span>星+1: <span class="val-add">${item.starAdd}</span></span>
+                            <span>最大値: <span class="val-max">${item.max}</span></span>
+                            <span>持続: ${item.duration}</span>
+                        </div>
+                        <div class="items-info">
+                            構成: ${itemsHtml}
+                        </div>
                     </div>
-                    <div class="effect-box">${item.effect}</div>
-                    <div class="stats-row">
-                        <span>星+1: <span class="val-add">${item.starAdd}</span></span>
-                        <span>最大値: <span class="val-max">${item.max}</span></span>
-                        <span>持続: ${item.duration}</span>
-                    </div>
-                    <div class="items-info" title="${item.items.join(' / ')}">
-                        構成: ${item.items.join(' / ')}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
 
             section.innerHTML = `
                 <div class="phase-header ${phase.class}">
