@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>モーマンタイム 傑作組み合わせ効果</title>
+    <title>モーマンタイム 傑作組合せ効果</title>
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -312,7 +312,7 @@
 <body>
 
 <header id="page-top">
-    <h1>モーマンタイム 傑作効果</h1>
+    <h1>モーマンタイム 傑作組合せ効果</h1>
     <p class="subtitle">戦闘中のステータス変化を発動タイミング順から検索</p>
 </header>
 
@@ -374,8 +374,13 @@ const phaseData = [
         phaseBadge: "パッシブ",
         class: "passive",
         items: [
+            { name: "孤忠の異聞", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "聊斎志異", color: "red" }, { name: "祭姪文稿", color: "red" }] },
+            { name: "函谷青雲", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "浮生六記", color: "red" }, { name: "商君書", color: "red" }] },
+            { name: "王朝の威風", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "唐書", color: "red" }, { name: "出塞", color: "red" }] },
+            { name: "山河絵の如し", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "天啓録", color: "red" }, { name: "千里江山図", color: "red" }] },
+            { name: "波濤一掃", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "八陣図", color: "red" }, { name: "？？？", color: "red" }] },
             { name: "戦略共鳴", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "三国志演義", color: "red" }, { name: "孫子兵法", color: "red" }] },
-            { name: "天宇雲沙", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
+            { name: "天宇懐沙", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
             { name: "玉に映る夢", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "都華如夢録", color: "red" }, { name: "青玉案・元夕", color: "red" }] },
             { name: "一夢の芳華", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "紅楼夢", color: "red" }, { name: "虞美人", color: "red" }] },
             { name: "文武両道", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "三十六計", color: "red" }, { name: "蘭亭序", color: "red" }] },
