@@ -22,13 +22,9 @@
 
             /* レア度カラー定義 */
             --rarity-red: #ef4444;
-            --rarity-red-bg: rgba(239, 68, 68, 0.15);
             --rarity-yellow: #f59e0b;
-            --rarity-yellow-bg: rgba(245, 158, 11, 0.15);
             --rarity-purple: #a855f7;
-            --rarity-purple-bg: rgba(168, 85, 247, 0.15);
             --rarity-cyan: #06b6d4;
-            --rarity-cyan-bg: rgba(6, 182, 212, 0.15);
         }
 
         * {
@@ -160,7 +156,7 @@
             overflow: hidden;
         }
 
-        /* レア度別カード枠線・背景の強調 */
+        /* レア度別カード枠線 */
         .card.r-red { border-left: 4px solid var(--rarity-red); }
         .card.r-yellow { border-left: 4px solid var(--rarity-yellow); }
         .card.r-purple { border-left: 4px solid var(--rarity-purple); }
@@ -180,9 +176,6 @@
             font-weight: 700;
             font-size: 1rem;
             letter-spacing: 0.02em;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         /* レア度別組合せ名の文字色 */
@@ -190,17 +183,6 @@
         .r-yellow .combo-name { color: #fde047; }
         .r-purple .combo-name { color: #e9d5ff; }
         .r-cyan .combo-name { color: #a5f3fc; }
-
-        .rarity-tag {
-            font-size: 0.65rem;
-            padding: 1px 6px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-        .r-red .rarity-tag { background: var(--rarity-red-bg); color: var(--rarity-red); border: 1px solid var(--rarity-red); }
-        .r-yellow .rarity-tag { background: var(--rarity-yellow-bg); color: var(--rarity-yellow); border: 1px solid var(--rarity-yellow); }
-        .r-purple .rarity-tag { background: var(--rarity-purple-bg); color: var(--rarity-purple); border: 1px solid var(--rarity-purple); }
-        .r-cyan .rarity-tag { background: var(--rarity-cyan-bg); color: var(--rarity-cyan); border: 1px solid var(--rarity-cyan); }
 
         .timing-tag {
             font-size: 0.75rem;
@@ -345,16 +327,6 @@ const phaseData = [
     }
 ];
 
-function getRarityLabel(rarity) {
-    switch(rarity) {
-        case 'red': return '赤品';
-        case 'yellow': return '金品';
-        case 'purple': return '紫品';
-        case 'cyan': return '青品';
-        default: return '';
-    }
-}
-
 function renderContent() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
     const container = document.getElementById('contentArea');
@@ -379,10 +351,7 @@ function renderContent() {
             let cardsHtml = filteredItems.map(item => `
                 <div class="card r-${item.rarity}">
                     <div class="card-top">
-                        <span class="combo-name">
-                            ${item.name}
-                            <span class="rarity-tag">${getRarityLabel(item.rarity)}</span>
-                        </span>
+                        <span class="combo-name">${item.name}</span>
                         <span class="timing-tag">${item.timing}</span>
                     </div>
                     <div class="effect-box">${item.effect}</div>
