@@ -55,6 +55,7 @@
             text-align: center;
             margin-bottom: 16px;
             padding-top: 10px;
+            scroll-margin-top: 20px;
         }
 
         h1 {
@@ -147,12 +148,18 @@
         .phase-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: space-between;
             font-size: 1.05rem;
             font-weight: 700;
             margin-bottom: 12px;
             padding-bottom: 6px;
             border-bottom: 2px solid;
+        }
+
+        .phase-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .phase-header.start { border-color: var(--section-start); color: #60a5fa; }
@@ -172,6 +179,25 @@
         .phase-header.turn .phase-badge { background: var(--section-turn); }
         .phase-header.passive .phase-badge { background: var(--section-passive); }
         .phase-header.cond .phase-badge { background: var(--section-cond); }
+
+        /* セクション横のトップへ戻るボタン */
+        .back-to-top-btn {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .back-to-top-btn:hover {
+            color: var(--accent-cyan);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(56, 189, 248, 0.1);
+        }
 
         .grid {
             display: grid;
@@ -281,7 +307,7 @@
 </head>
 <body>
 
-<header>
+<header id="page-top">
     <h1>モーマンタイム 傑作効果</h1>
     <p class="subtitle">戦闘中のステータス変化を発動タイミング順から検索</p>
 </header>
@@ -414,8 +440,11 @@ function renderContent() {
 
             section.innerHTML = `
                 <div class="phase-header ${phase.class}">
-                    <span>${phase.phaseTitle}</span>
-                    <span class="phase-badge">${phase.phaseBadge}</span>
+                    <div class="phase-header-left">
+                        <span>${phase.phaseTitle}</span>
+                        <span class="phase-badge">${phase.phaseBadge}</span>
+                    </div>
+                    <a href="#page-top" class="back-to-top-btn">▲ トップへ</a>
                 </div>
                 <div class="grid">${cardsHtml}</div>
             `;
