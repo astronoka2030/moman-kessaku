@@ -3,401 +3,478 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>モーマンタイム 傑作組合せ効果一覧</title>
+    <title>モーマンタイム 傑作組合せ効果</title>
     <style>
         :root {
-            --bg-color: #f8fafc;
-            --card-bg: #ffffff;
-            --text-main: #1e293b;
-            --text-sub: #64748b;
-            --border-color: #e2e8f0;
-            --primary-blue: #2563eb;
-            
-            /* レア度・品質別カラー */
+            --bg-color: #0b0f19;
+            --card-bg: rgba(26, 34, 52, 0.85);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #38bdf8;
+            --accent-gold: #f59e0b;
+            --accent-green: #34d399;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --section-start: #3b82f6;
+            --section-turn: #10b981;
+            --section-passive: #8b5cf6;
+            --section-cond: #f59e0b;
+
+            /* レア度カラー定義 */
             --rarity-red: #ef4444;
-            --rarity-yellow: #ca8a04;
-            --rarity-purple: #9333ea;
-            --rarity-cyan: #0891b2;
+            --rarity-yellow: #f59e0b;
+            --rarity-purple: #a855f7;
+            --rarity-cyan: #06b6d4;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 12px;
-            max-width: 100%;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            padding: 16px;
+            max-width: 900px;
             margin: 0 auto;
+            padding-bottom: 80px;
         }
 
         header {
             text-align: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            padding-top: 10px;
+            scroll-margin-top: 20px;
         }
 
         h1 {
-            font-size: 1.25rem;
+            font-size: 1.35rem;
             font-weight: 700;
-            color: var(--text-main);
+            letter-spacing: 0.03em;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
         }
 
-        /* フィルターパネル */
-        .filter-panel {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+        .subtitle {
             font-size: 0.8rem;
+            color: var(--text-secondary);
         }
 
-        .filter-label {
-            font-weight: 700;
-            color: var(--text-sub);
-            min-width: 65px;
-        }
-
-        .filter-options {
+        .jump-nav {
             display: flex;
-            gap: 6px;
+            gap: 8px;
+            justify-content: center;
             flex-wrap: wrap;
+            margin-bottom: 12px;
         }
 
-        .btn-filter {
-            border: none;
-            background: #f1f5f9;
-            color: var(--text-sub);
-            padding: 4px 10px;
-            border-radius: 16px;
-            font-size: 0.78rem;
+        .jump-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
+            text-decoration: none;
+            transition: all 0.2s ease;
         }
 
-        .btn-filter.active {
-            background: var(--primary-blue);
+        .jump-btn:hover {
+            background: rgba(56, 189, 248, 0.15);
             color: #ffffff;
+            border-color: var(--accent-cyan);
         }
 
-        .search-input {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            font-size: 0.85rem;
-            outline: none;
-            background: #ffffff;
-        }
+        .jump-btn.start-btn { border-color: rgba(59, 130, 246, 0.4); color: #93c5fd; }
+        .jump-btn.turn-btn { border-color: rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+        .jump-btn.passive-btn { border-color: rgba(139, 92, 246, 0.4); color: #c4b5fd; }
+        .jump-btn.cond-btn { border-color: rgba(245, 158, 11, 0.4); color: #fde047; }
 
-        .search-input:focus {
-            border-color: var(--primary-blue);
-            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
-        }
-
-        /* テーブルコンテナ（横スクロール対応） */
-        .table-wrapper {
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow-x: auto;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table {
-            width: 100%;
-            min-width: 800px;
-            border-collapse: separate;
-            border-spacing: 0;
-            font-size: 0.82rem;
-            text-align: left;
-        }
-
-        th {
-            background: #334155;
-            color: #ffffff;
-            font-weight: 700;
-            padding: 10px 10px;
-            white-space: nowrap;
-        }
-
-        td {
-            padding: 8px 10px;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-            background: #ffffff;
-        }
-
-        tr:nth-child(even) td {
-            background-color: #f8fafc;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        /* 1列目（効果）の固定＆幅コンパクト化 */
-        th.sticky-col, td.sticky-col {
+        .sticky-header {
             position: sticky;
-            left: 0;
-            z-index: 10;
-            width: 180px;
-            max-width: 180px;
-            min-width: 160px;
+            top: 0;
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 10px 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--card-border);
+            margin-bottom: 20px;
         }
 
-        th.sticky-col {
-            background: #334155;
-            z-index: 11;
+        .search-box {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            border-radius: 10px;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        td.sticky-col {
+        .search-box:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+        }
+
+        .search-box::placeholder {
+            color: var(--text-muted);
+        }
+
+        .phase-section {
+            margin-bottom: 28px;
+            scroll-margin-top: 110px;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid;
+        }
+
+        .phase-header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .phase-header.start { border-color: var(--section-start); color: #60a5fa; }
+        .phase-header.turn { border-color: var(--section-turn); color: #34d399; }
+        .phase-header.passive { border-color: var(--section-passive); color: #a78bfa; }
+        .phase-header.cond { border-color: var(--section-cond); color: #fbbf24; }
+
+        .phase-badge {
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            color: #fff;
             font-weight: 600;
-            font-size: 0.78rem;
-            line-height: 1.35;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
         }
 
-        /* 左端のカラーライン */
-        tr.r-red td.sticky-col { border-left: 4px solid var(--rarity-red); }
-        tr.r-yellow td.sticky-col { border-left: 4px solid var(--rarity-yellow); }
-        tr.r-purple td.sticky-col { border-left: 4px solid var(--rarity-purple); }
-        tr.r-cyan td.sticky-col { border-left: 4px solid var(--rarity-cyan); }
+        .phase-header.start .phase-badge { background: var(--section-start); }
+        .phase-header.turn .phase-badge { background: var(--section-turn); }
+        .phase-header.passive .phase-badge { background: var(--section-passive); }
+        .phase-header.cond .phase-badge { background: var(--section-cond); }
 
-        .nowrap {
-            white-space: nowrap;
+        .back-to-top-btn {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .sub-info {
-            font-size: 0.72rem;
-            color: var(--text-sub);
-            display: block;
-            margin-top: 2px;
+        .back-to-top-btn:hover {
+            color: var(--accent-cyan);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(8px);
+            transition: transform 0.15s ease, border-color 0.15s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* レア度別カード枠線 */
+        .card.r-red { border-left: 4px solid var(--rarity-red); }
+        .card.r-yellow { border-left: 4px solid var(--rarity-yellow); }
+        .card.r-purple { border-left: 4px solid var(--rarity-purple); }
+        .card.r-cyan { border-left: 4px solid var(--rarity-cyan); }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .combo-name {
             font-weight: 700;
-            white-space: nowrap;
+            font-size: 1rem;
+            letter-spacing: 0.02em;
+        }
+
+        .r-red .combo-name { color: #fca5a5; }
+        .r-yellow .combo-name { color: #fde047; }
+        .r-purple .combo-name { color: #e9d5ff; }
+        .r-cyan .combo-name { color: #a5f3fc; }
+
+        .timing-tag {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--accent-cyan);
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .effect-box {
+            font-size: 0.9rem;
+            line-height: 1.45;
+            color: var(--text-primary);
+            background: rgba(0, 0, 0, 0.25);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-cyan);
+        }
+
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            padding-top: 4px;
         }
 
         .val-add {
-            color: #16a34a;
+            color: var(--accent-green);
             font-weight: 600;
         }
 
         .val-max {
-            color: #d97706;
+            color: var(--accent-gold);
             font-weight: 700;
         }
 
-        /* 構成傑作の個別文字色 */
+        .items-info {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            border-top: 1px dashed rgba(255, 255, 255, 0.08);
+            padding-top: 6px;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        /* 構成傑作の個別カラー */
         .item-tag {
             font-weight: 600;
         }
-        .item-tag.c-red { color: var(--rarity-red); }
-        .item-tag.c-yellow { color: var(--rarity-yellow); }
-        .item-tag.c-purple { color: var(--rarity-purple); }
-        .item-tag.c-cyan { color: var(--rarity-cyan); }
+        .item-tag.c-red { color: #fca5a5; }
+        .item-tag.c-yellow { color: #fde047; }
+        .item-tag.c-purple { color: #d8b4fe; }
+        .item-tag.c-cyan { color: #67e8f9; }
 
         .no-result {
-            padding: 30px;
             text-align: center;
-            color: var(--text-sub);
-            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 40px 0;
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>📜 傑作組合せ効果一覧</h1>
+<header id="page-top">
+    <h1>モーマンタイム 傑作組合せ効果</h1>
+    <p class="subtitle">戦闘中のステータス変化を発動タイミング順から検索</p>
 </header>
 
-<div class="filter-panel">
-    <div class="filter-group">
-        <span class="filter-label">📌 タイミング:</span>
-        <div class="filter-options" id="timingFilters">
-            <button class="btn-filter active" data-filter="all">すべて</button>
-            <button class="btn-filter" data-filter="開戦時">開戦時</button>
-            <button class="btn-filter" data-filter="ターン">ターン</button>
-            <button class="btn-filter" data-filter="パッシブ">パッシブ</button>
-            <button class="btn-filter" data-filter="条件">条件発動</button>
-        </div>
-    </div>
-
-    <div class="filter-group">
-        <span class="filter-label">⭐ 品質:</span>
-        <div class="filter-options" id="rarityFilters">
-            <button class="btn-filter active" data-filter="all">すべて</button>
-            <button class="btn-filter" data-filter="red">赤品</button>
-            <button class="btn-filter" data-filter="yellow">金品</button>
-            <button class="btn-filter" data-filter="purple">紫品</button>
-            <button class="btn-filter" data-filter="cyan">青品</button>
-        </div>
-    </div>
-
-    <input type="text" id="searchInput" class="search-input" placeholder="組合せ名・傑作名・効果で検索...">
+<div class="jump-nav">
+    <a href="#section-start" class="jump-btn start-btn">開戦時</a>
+    <a href="#section-turn" class="jump-btn turn-btn">ターン判定</a>
+    <a href="#section-passive" class="jump-btn passive-btn">パッシブ</a>
+    <a href="#section-cond" class="jump-btn cond-btn">条件発動</a>
 </div>
 
-<div class="table-wrapper">
-    <table>
-        <thead>
-            <tr>
-                <th class="sticky-col">効果</th>
-                <th style="width: 14%;">発動タイミング</th>
-                <th style="width: 8%;">星+1</th>
-                <th style="width: 8%;">最大値</th>
-                <th style="width: 16%;">組合せ名</th>
-                <th style="width: 30%;">構成傑作</th>
-            </tr>
-        </thead>
-        <tbody id="tableBody"></tbody>
-    </table>
+<div class="sticky-header">
+    <input type="text" id="searchInput" class="search-box" placeholder="効果・数値・言葉で検索（例: シールド, 軽減, 5%, 装甲）">
 </div>
+
+<div id="contentArea"></div>
 
 <script>
-const allData = [
-    // 開戦時
-    { name: "歴史に名を刻む", rarity: "red", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "最大体力の20%分のシールド値を獲得", starAdd: "+10%", max: "110%", items: [{ name: "史記", color: "red" }, { name: "資治通鑑", color: "red" }] },
-    { name: "文心彫龍", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", items: [{ name: "陳情表", color: "yellow" }, { name: "滕王閣序", color: "yellow" }, { name: "師説", color: "yellow" }, { name: "愛蓮説", color: "yellow" }] },
-    { name: "解釈と訓詁", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", items: [{ name: "左伝", color: "yellow" }, { name: "礼記", color: "yellow" }, { name: "尚書", color: "yellow" }, { name: "夢渓筆談", color: "yellow" }] },
-    { name: "文学の精華", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "10%の攻撃低下耐性を獲得（自身の攻撃力は最大10%まで低下）", starAdd: "+5%", max: "55%", items: [{ name: "葬花", color: "yellow" }, { name: "勅勒歌", color: "yellow" }, { name: "群英会", color: "purple" }, { name: "永楽大典", color: "purple" }] },
-    { name: "愚喜こもごも", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "敵を攻撃する際に削る装甲値+10%", starAdd: "+5%", max: "55%", items: [{ name: "入陣曲", color: "yellow" }, { name: "竇娥冤", color: "yellow" }, { name: "西遊記", color: "yellow" }, { name: "牡丹亭", color: "yellow" }] },
-    { name: "芸術界の至宝", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "攻撃を受けた際に減少する装甲値-10%", starAdd: "-5%", max: "-55%", items: [{ name: "紫荊花", color: "yellow" }, { name: "洛神賦図", color: "yellow" }, { name: "百駿図", color: "yellow" }, { name: "胡旋舞", color: "yellow" }] },
-    { name: "諸子の叡智", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "敵の最終的な総ダメージバフ効果-12%", starAdd: "-3%", max: "-39%", items: [{ name: "世説新語", color: "yellow" }, { name: "孟子", color: "yellow" }, { name: "荘子", color: "yellow" }, { name: "墨子", color: "yellow" }] },
-    { name: "天下を制す", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "敵の最終的な総ダメージ軽減効果-12%", starAdd: "-3%", max: "-39%", items: [{ name: "漢書", color: "yellow" }, { name: "天工開物", color: "yellow" }, { name: "水経注", color: "yellow" }, { name: "戦国策", color: "yellow" }] },
-    { name: "膾炙人口", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "敵の最終的な総ダメージバフ効果-5%", starAdd: "-2%", max: "-23%", items: [{ name: "櫟林英掛飾", color: "yellow" }, { name: "天仙配", color: "yellow" }, { name: "儒林外史", color: "purple" }, { name: "容斎随筆", color: "purple" }] },
-    { name: "伝説の春秋", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "敵の最終的な総ダメージ軽減効果-5%", starAdd: "-2%", max: "-23%", items: [{ name: "覇王別姫", color: "yellow" }, { name: "白蛇伝", color: "yellow" }, { name: "呂氏春秋", color: "purple" }, { name: "伝習録", color: "purple" }] },
-    { name: "風和山水", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effect: "敵の回復弱体化+10%", starAdd: "+4%", max: "46%", items: [{ name: "将進酒", color: "yellow" }, { name: "芙蓉錦鶏図", color: "purple" }, { name: "渓山行旅図", color: "purple" }, { name: "剣器舞", color: "purple" }] },
-    // ターン判定
-    { name: "学養札記", rarity: "purple", timingCategory: "ターン", timingMain: "3ターンごと", timingSub: "(2ターン持続)", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", items: [{ name: "長恨歌", color: "purple" }, { name: "徐霞客遊記", color: "purple" }, { name: "歩輦図", color: "cyan" }, { name: "漢宮春暁図", color: "cyan" }] },
-    { name: "大音は希声なり", rarity: "purple", timingCategory: "ターン", timingMain: "3ターンごと", timingSub: "(2ターン持続)", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", items: [{ name: "登幽州台歌", color: "purple" }, { name: "琵琶行", color: "purple" }, { name: "漁舟唱晩", color: "cyan" }, { name: "平沙落雁", color: "cyan" }] },
-    { name: "文苑新話", rarity: "cyan", timingCategory: "ターン", timingMain: "4ターン目", timingSub: "(2ターン持続)", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", items: [{ name: "泊泰淮", color: "cyan" }, { name: "涼州詞", color: "cyan" }, { name: "破陣子", color: "cyan" }, { name: "四書集注", color: "cyan" }] },
-    { name: "文学級義", rarity: "cyan", timingCategory: "ターン", timingMain: "4ターン目", timingSub: "(2ターン持続)", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", items: [{ name: "諫逐客書", color: "cyan" }, { name: "女尉馬", color: "cyan" }, { name: "打金枝", color: "cyan" }, { name: "納蘭詞集", color: "cyan" }] },
-    { name: "梨園の春秋", rarity: "purple", timingCategory: "ターン", timingMain: "4ターンごと", timingSub: "", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", items: [{ name: "梁山伯と祝英台", color: "purple" }, { name: "趙氏孤児", color: "purple" }, { name: "漢宮秋", color: "purple" }, { name: "錦瑟", color: "purple" }] },
-    { name: "霓裳羽衣", rarity: "purple", timingCategory: "ターン", timingMain: "4ターンごと", timingSub: "", effect: "敵に攻撃力の80%のダメージ", starAdd: "+12%", max: "188%", items: [{ name: "盤鼓の舞", color: "purple" }, { name: "獅子舞", color: "purple" }, { name: "長生殿", color: "purple" }, { name: "桃花扇", color: "purple" }] },
-    { name: "弄文舞墨", rarity: "cyan", timingCategory: "ターン", timingMain: "6ターン目", timingSub: "", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", items: [{ name: "報任安書", color: "cyan" }, { name: "五柳先生伝", color: "cyan" }, { name: "孔雀の舞", color: "cyan" }, { name: "雷峰塔", color: "cyan" }] },
-    { name: "清高雅泰", rarity: "cyan", timingCategory: "ターン", timingMain: "6ターン目", timingSub: "", effect: "敵に攻撃力の50%のダメージ", starAdd: "+10%", max: "140%", items: [{ name: "貞観政要", color: "cyan" }, { name: "捕蛇者説", color: "cyan" }, { name: "踏歌", color: "cyan" }, { name: "蓮花の舞", color: "cyan" }] },
-    { name: "書剣双絶", rarity: "yellow", timingCategory: "ターン", timingMain: "2ターンごと", timingSub: "(HP50%以上)", effect: "敵に現在の体力の2%のダメージ", starAdd: "+1%", max: "11%", items: [{ name: "観滄海", color: "yellow" }, { name: "満江紅", color: "yellow" }, { name: "梅花三弄", color: "purple" }, { name: "陽関三畳", color: "purple" }] },
-    { name: "文才墨粋", rarity: "red", timingCategory: "ターン", timingMain: "毎ターン20%確率", timingSub: "", effect: "味方のデバフを1つ解除（傑作デバフ除く）", starAdd: "+7%", max: "83%", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] },
-
-    // パッシブ
-    { name: "孤忠の異聞", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "聊斎志異", color: "red" }, { name: "祭姪文稿", color: "red" }] },
-    { name: "函谷青雲", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "浮生六記", color: "red" }, { name: "商君書", color: "red" }] },
-    { name: "王朝の威風", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "唐書", color: "red" }, { name: "出塞", color: "red" }] },
-    { name: "山河絵の如し", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "天啓録", color: "red" }, { name: "千里江山図", color: "red" }] },
-    { name: "波濤一掃", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "八陣図", color: "red" }, { name: "？？？", color: "red" }] },
-    { name: "戦略兵鑑", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "三国志演義", color: "red" }, { name: "孫子兵法", color: "red" }] },
-    { name: "天宇懐沙", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
-    { name: "玉に映る夢", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "都華如夢録", color: "red" }, { name: "青玉案・元夕", color: "red" }] },
-    { name: "一夢の芳華", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", items: [{ name: "紅楼夢", color: "red" }, { name: "虞美人", color: "red" }] },
-    { name: "文武両道", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "三十六計", color: "red" }, { name: "蘭亭序", color: "red" }] },
-    { name: "君臣同心", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "牧誓", color: "red" }, { name: "楊家将", color: "red" }] },
-    { name: "龍韜虎略", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "六韜", color: "red" }, { name: "三略", color: "red" }] },
-    { name: "救世奇謀", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "傷寒雑病論", color: "red" }, { name: "十勝十敗論", color: "red" }] },
-    { name: "史詩流芳", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", items: [{ name: "後漢書", color: "red" }, { name: "？？？", color: "red" }] },
-    { name: "温陵雅韻", rarity: "yellow", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方のダメージ軽減+6%", starAdd: "+3%", max: "33%", items: [{ name: "落龍滂", color: "yellow" }, { name: "四時景", color: "yellow" }, { name: "芭蕉記", color: "yellow" }] },
-    { name: "経世済民", rarity: "yellow", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effect: "味方の特殊ダメージ軽減+10%（反撃/跳ね返し/異常ダメージ-10%）", starAdd: "+4%", max: "46%", items: [{ name: "三字経", color: "yellow" }, { name: "春秋", color: "yellow" }, { name: "斉民要術", color: "yellow" }, { name: "海国図志", color: "yellow" }] },
-
-    // 条件発動
-    { name: "雅楽正声", rarity: "yellow", timingCategory: "条件", timingMain: "1ターン複数回被弾時", timingSub: "", effect: "最初のダメージを除き残りのダメージは5%吸収", starAdd: "+1%", max: "14%", items: [{ name: "陋室銘", color: "yellow" }, { name: "霓裳曲", color: "yellow" }, { name: "高山流水", color: "yellow" }, { name: "秦王破陣楽", color: "yellow" }] },
-    { name: "玉振金声", rarity: "yellow", timingCategory: "条件", timingMain: "敵クリティカル時", timingSub: "", effect: "受けるダメージが-8%", starAdd: "-3%", max: "-35%", items: [{ name: "登高", color: "yellow" }, { name: "蜀道難", color: "yellow" }, { name: "塩鉄論", color: "purple" }, { name: "朱元思へ", color: "purple" }] },
-    { name: "千古の名曲", rarity: "yellow", timingCategory: "条件", timingMain: "被ダメージ時(吸収)", timingSub: "", effect: "敵がダメージを吸収する際の吸収量-15%", starAdd: "-5%", max: "-60%", items: [{ name: "岳陽楼記", color: "yellow" }, { name: "桃花源記", color: "yellow" }, { name: "阿房宮賦", color: "yellow" }, { name: "赤壁賦", color: "yellow" }] },
-    { name: "詩歌管弦", rarity: "yellow", timingCategory: "条件", timingMain: "最大HP超え回復時", timingSub: "", effect: "超過分の10%をシールド値に変換", starAdd: "+5%", max: "55%", items: [{ name: "孔雀東南飛", color: "yellow" }, { name: "木蘭詩", color: "yellow" }, { name: "春江花月夜", color: "purple" }, { name: "待ち伏せ", color: "purple" }] },
-    { name: "絵画の名手", rarity: "yellow", timingCategory: "条件", timingMain: "威率が敵より上", timingSub: "", effect: "敵に攻撃力の100%のダメージ", starAdd: "+20%", max: "280%", items: [{ name: "水調歌頭", color: "yellow" }, { name: "女史箴図", color: "purple" }, { name: "富春山居図", color: "purple" }, { name: "五牛図", color: "purple" }] }
+const phaseData = [
+    {
+        phaseId: "section-start",
+        phaseTitle: "1. 戦闘開始時に発動",
+        phaseBadge: "開戦時",
+        class: "start",
+        items: [
+            { name: "歴史に名を刻む", rarity: "red", timing: "戦闘開始時", effect: "最大体力の20%分のシールド値を獲得", starAdd: "+10%", max: "110%", duration: "-", items: [{ name: "史記", color: "red" }, { name: "資治通鑑", color: "red" }] },
+            { name: "文心彫龍", rarity: "yellow", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", duration: "-", items: [{ name: "陳情表", color: "yellow" }, { name: "滕王閣序", color: "yellow" }, { name: "師説", color: "yellow" }, { name: "愛蓮説", color: "yellow" }] },
+            { name: "解釈と訓詁", rarity: "yellow", timing: "戦闘開始時", effect: "最大体力の10%分のシールド値を獲得", starAdd: "+5%", max: "55%", duration: "-", items: [{ name: "左伝", color: "yellow" }, { name: "礼記", color: "yellow" }, { name: "尚書", color: "yellow" }, { name: "夢渓筆談", color: "yellow" }] },
+            { name: "文学の精華", rarity: "yellow", timing: "戦闘開始時", effect: "10%の攻撃低下耐性を獲得（自身の攻撃力は最大10%まで低下）", starAdd: "+5%", max: "55%", duration: "戦闘終了まで", items: [{ name: "葬花", color: "yellow" }, { name: "勅勒歌", color: "yellow" }, { name: "群英会", color: "purple" }, { name: "永楽大典", color: "purple" }] },
+            { name: "愚喜こもごも", rarity: "yellow", timing: "戦闘開始時", effect: "敵を攻撃する際に削る装甲値+10%", starAdd: "+5%", max: "55%", duration: "戦闘終了まで", items: [{ name: "入陣曲", color: "yellow" }, { name: "竇娥冤", color: "yellow" }, { name: "西遊記", color: "yellow" }, { name: "牡丹亭", color: "yellow" }] },
+            { name: "芸術界の至宝", rarity: "yellow", timing: "戦闘開始時", effect: "攻撃を受けた際に減少する装甲値-10%", starAdd: "-5%", max: "-55%", duration: "戦闘終了まで", items: [{ name: "紫荊花", color: "yellow" }, { name: "洛神賦図", color: "yellow" }, { name: "百駿図", color: "yellow" }, { name: "胡旋舞", color: "yellow" }] },
+            { name: "諸子の叡智", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-12%", starAdd: "-3%", max: "-39%", duration: "戦闘終了まで", items: [{ name: "世説新語", color: "yellow" }, { name: "孟子", color: "yellow" }, { name: "荘子", color: "yellow" }, { name: "墨子", color: "yellow" }] },
+            { name: "天下を制す", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-12%", starAdd: "-3%", max: "-39%", duration: "戦闘終了まで", items: [{ name: "漢書", color: "yellow" }, { name: "天工開物", color: "yellow" }, { name: "水経注", color: "yellow" }, { name: "戦国策", color: "yellow" }] },
+            { name: "膾炙人口", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージバフ効果-5%", starAdd: "-2%", max: "-23%", duration: "戦闘終了まで", items: [{ name: "櫟林英掛飾", color: "yellow" }, { name: "天仙配", color: "yellow" }, { name: "儒林外史", color: "purple" }, { name: "容斎随筆", color: "purple" }] },
+            { name: "伝説の春秋", rarity: "yellow", timing: "戦闘開始時", effect: "敵の最終的な総ダメージ軽減効果-5%", starAdd: "-2%", max: "-23%", duration: "戦闘終了まで", items: [{ name: "覇王別姫", color: "yellow" }, { name: "白蛇伝", color: "yellow" }, { name: "呂氏春秋", color: "purple" }, { name: "伝習録", color: "purple" }] },
+            { name: "風和山水", rarity: "yellow", timing: "戦闘開始時", effect: "敵の回復弱体化+10%", starAdd: "+4%", max: "46%", duration: "戦闘終了まで", items: [{ name: "将進酒", color: "yellow" }, { name: "芙蓉錦鶏図", color: "purple" }, { name: "渓山行旅図", color: "purple" }, { name: "剣器舞", color: "purple" }] }
+        ]
+    },
+    {
+        phaseId: "section-turn",
+        phaseTitle: "2. ターン進行に伴い発動",
+        phaseBadge: "ターン判定",
+        class: "turn",
+        items: [
+            { name: "学養札記", rarity: "purple", timing: "3ターンごと", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "長恨歌", color: "purple" }, { name: "徐霞客遊記", color: "purple" }, { name: "歩輦図", color: "cyan" }, { name: "漢宮春暁図", color: "cyan" }] },
+            { name: "大音は希声なり", rarity: "purple", timing: "3ターンごと", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "登幽州台歌", color: "purple" }, { name: "琵琶行", color: "purple" }, { name: "漁舟唱晩", color: "cyan" }, { name: "平沙落雁", color: "cyan" }] },
+            { name: "文苑新話", rarity: "cyan", timing: "4ターン目", effect: "味方のダメージ軽減+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "泊泰淮", color: "cyan" }, { name: "涼州詞", color: "cyan" }, { name: "破陣子", color: "cyan" }, { name: "四書集注", color: "cyan" }] },
+            { name: "文学級義", rarity: "cyan", timing: "4ターン目", effect: "味方のダメージバフ+5%", starAdd: "+3%", max: "32%", duration: "2ターン", items: [{ name: "諫逐客書", color: "cyan" }, { name: "女尉馬", color: "cyan" }, { name: "打金枝", color: "cyan" }, { name: "納蘭詞集", color: "cyan" }] },
+            { name: "梨園の春秋", rarity: "purple", timing: "4ターンごと", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", duration: "-", items: [{ name: "梁山伯と祝英台", color: "purple" }, { name: "趙氏孤児", color: "purple" }, { name: "漢宮秋", color: "purple" }, { name: "錦瑟", color: "purple" }] },
+            { name: "霓裳羽衣", rarity: "purple", timing: "4ターンごと", effect: "敵に攻撃力の80%のダメージ", starAdd: "+12%", max: "188%", duration: "-", items: [{ name: "盤鼓の舞", color: "purple" }, { name: "獅子舞", color: "purple" }, { name: "長生殿", color: "purple" }, { name: "桃花扇", color: "purple" }] },
+            { name: "弄文舞墨", rarity: "cyan", timing: "6ターン目", effect: "味方の最大体力の5%分回復", starAdd: "+1%", max: "14%", duration: "-", items: [{ name: "報任安書", color: "cyan" }, { name: "五柳先生伝", color: "cyan" }, { name: "孔雀の舞", color: "cyan" }, { name: "雷峰塔", color: "cyan" }] },
+            { name: "清高雅泰", rarity: "cyan", timing: "6ターン目", effect: "敵に攻撃力の50%のダメージ", starAdd: "+10%", max: "140%", duration: "-", items: [{ name: "貞観政要", color: "cyan" }, { name: "捕蛇者説", color: "cyan" }, { name: "踏歌", color: "cyan" }, { name: "蓮花の舞", color: "cyan" }] },
+            { name: "書剣双絶", rarity: "yellow", timing: "2ターンごと(HP50%以上)", effect: "敵に現在の体力の2%のダメージ", starAdd: "+1%", max: "11%", duration: "-", items: [{ name: "観滄海", color: "yellow" }, { name: "満江紅", color: "yellow" }, { name: "梅花三弄", color: "purple" }, { name: "陽関三畳", color: "purple" }] },
+            { name: "文才墨粋", rarity: "red", timing: "毎ターン20%確率", effect: "味方のデバフを1つ解除（傑作デバフ除く）", starAdd: "+7%", max: "83%", duration: "-", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] }
+        ]
+    },
+    {
+        phaseId: "section-passive",
+        phaseTitle: "3. 常時・パッシブ発動",
+        phaseBadge: "パッシブ",
+        class: "passive",
+        items: [
+            { name: "孤忠の異聞", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "聊斎志異", color: "red" }, { name: "祭姪文稿", color: "red" }] },
+            { name: "函谷青雲", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "浮生六記", color: "red" }, { name: "商君書", color: "red" }] },
+            { name: "王朝の威風", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "唐書", color: "red" }, { name: "出塞", color: "red" }] },
+            { name: "山河絵の如し", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "天啓録", color: "red" }, { name: "千里江山図", color: "red" }] },
+            { name: "波濤一掃", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "八陣図", color: "red" }, { name: "？？？", color: "red" }] },
+            { name: "戦略兵鑑", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "三国志演義", color: "red" }, { name: "孫子兵法", color: "red" }] },
+            { name: "天宇懐沙", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
+            { name: "玉に映る夢", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "都華如夢録", color: "red" }, { name: "青玉案・元夕", color: "red" }] },
+            { name: "一夢の芳華", rarity: "red", timing: "パッシブ", effect: "味方のダメージバフ+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "紅楼夢", color: "red" }, { name: "虞美人", color: "red" }] },
+            { name: "文武両道", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "三十六計", color: "red" }, { name: "蘭亭序", color: "red" }] },
+            { name: "君臣同心", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "牧誓", color: "red" }, { name: "楊家将", color: "red" }] },
+            { name: "龍韜虎略", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "六韜", color: "red" }, { name: "三略", color: "red" }] },
+            { name: "救世奇謀", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "傷寒雑病論", color: "red" }, { name: "十勝十敗論", color: "red" }] },
+            { name: "史詩流芳", rarity: "red", timing: "パッシブ", effect: "味方のダメージ軽減+20%", starAdd: "+10%", max: "110%", duration: "戦闘終了まで", items: [{ name: "後漢書", color: "red" }, { name: "？？？", color: "red" }] },
+            { name: "温陵雅韻", rarity: "yellow", timing: "パッシブ", effect: "味方のダメージ軽減+6%", starAdd: "+3%", max: "33%", duration: "戦闘終了まで", items: [{ name: "落龍滂", color: "yellow" }, { name: "四時景", color: "yellow" }, { name: "芭蕉記", color: "yellow" }] },
+            { name: "経世済民", rarity: "yellow", timing: "パッシブ", effect: "味方の特殊ダメージ軽減+10%（反撃/跳ね返し/異常ダメージ-10%）", starAdd: "+4%", max: "46%", duration: "-", items: [{ name: "三字経", color: "yellow" }, { name: "春秋", color: "yellow" }, { name: "斉民要術", color: "yellow" }, { name: "海国図志", color: "yellow" }] }
+        ]
+    },
+    {
+        phaseId: "section-cond",
+        phaseTitle: "4. 特定アクショントリガー",
+        phaseBadge: "条件発動",
+        class: "cond",
+        items: [
+            { name: "雅楽正声", rarity: "yellow", timing: "1ターン複数回被弾時", effect: "最初のダメージを除き残りのダメージは5%吸収", starAdd: "+1%", max: "14%", duration: "-", items: [{ name: "陋室銘", color: "yellow" }, { name: "霓裳曲", color: "yellow" }, { name: "高山流水", color: "yellow" }, { name: "秦王破陣楽", color: "yellow" }] },
+            { name: "玉振金声", rarity: "yellow", timing: "敵クリティカル発動時", effect: "受けるダメージが-8%", starAdd: "-3%", max: "-35%", duration: "-", items: [{ name: "登高", color: "yellow" }, { name: "蜀道難", color: "yellow" }, { name: "塩鉄論", color: "purple" }, { name: "朱元思へ", color: "purple" }] },
+            { name: "千古の名曲", rarity: "yellow", timing: "被ダメージ時(吸収)", effect: "敵がダメージを吸収する際の吸収量-15%", starAdd: "-5%", max: "-60%", duration: "-", items: [{ name: "岳陽楼記", color: "yellow" }, { name: "桃花源記", color: "yellow" }, { name: "阿房宮賦", color: "yellow" }, { name: "赤壁賦", color: "yellow" }] },
+            { name: "詩歌管弦", rarity: "yellow", timing: "最大HP超え回復時", effect: "超過分の10%をシールド値に変換", starAdd: "+5%", max: "55%", duration: "-", items: [{ name: "孔雀東南飛", color: "yellow" }, { name: "木蘭詩", color: "yellow" }, { name: "春江花月夜", color: "purple" }, { name: "待ち伏せ", color: "purple" }] },
+            { name: "絵画の名手", rarity: "yellow", timing: "威率が敵より上", effect: "敵に攻撃力の100%のダメージ", starAdd: "+20%", max: "280%", duration: "-", items: [{ name: "水調歌頭", color: "yellow" }, { name: "女史箴図", color: "purple" }, { name: "富春山居図", color: "purple" }, { name: "五牛図", color: "purple" }] }
+        ]
+    }
 ];
 
-let selectedTiming = 'all';
-let selectedRarity = 'all';
-
-function render() {
+function renderContent() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '';
+    const container = document.getElementById('contentArea');
+    container.innerHTML = '';
 
-    const filtered = allData.filter(item => {
-        const matchTiming = selectedTiming === 'all' || item.timingCategory === selectedTiming;
-        const matchRarity = selectedRarity === 'all' || item.rarity === selectedRarity;
-        const matchSearch = item.name.toLowerCase().includes(query) ||
-                            item.effect.toLowerCase().includes(query) ||
-                            item.items.some(i => i.name.toLowerCase().includes(query)) ||
-                            item.timingMain.toLowerCase().includes(query) ||
-                            item.timingSub.toLowerCase().includes(query);
+    let totalCount = 0;
 
-        return matchTiming && matchRarity && matchSearch;
+    phaseData.forEach(phase => {
+        const filteredItems = phase.items.filter(item => {
+            return item.name.toLowerCase().includes(query) ||
+                   item.effect.toLowerCase().includes(query) ||
+                   item.timing.toLowerCase().includes(query) ||
+                   item.items.some(i => i.name.toLowerCase().includes(query));
+        });
+
+        if (filteredItems.length > 0) {
+            totalCount += filteredItems.length;
+
+            const section = document.createElement('div');
+            section.className = 'phase-section';
+            section.id = phase.phaseId;
+
+            let cardsHtml = filteredItems.map(item => {
+                const itemsHtml = item.items.map(i => `<span class="item-tag c-${i.color}">${i.name}</span>`).join(' / ');
+
+                return `
+                    <div class="card r-${item.rarity}">
+                        <div class="card-top">
+                            <span class="combo-name">${item.name}</span>
+                            <span class="timing-tag">${item.timing}</span>
+                        </div>
+                        <div class="effect-box">${item.effect}</div>
+                        <div class="stats-row">
+                            <span>星+1: <span class="val-add">${item.starAdd}</span></span>
+                            <span>最大値: <span class="val-max">${item.max}</span></span>
+                            <span>持続: ${item.duration}</span>
+                        </div>
+                        <div class="items-info">
+                            構成: ${itemsHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            section.innerHTML = `
+                <div class="phase-header ${phase.class}">
+                    <div class="phase-header-left">
+                        <span>${phase.phaseTitle}</span>
+                        <span class="phase-badge">${phase.phaseBadge}</span>
+                    </div>
+                    <a href="#page-top" class="back-to-top-btn">▲ トップへ</a>
+                </div>
+                <div class="grid">${cardsHtml}</div>
+            `;
+
+            container.appendChild(section);
+        }
     });
 
-    if (filtered.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="6" class="no-result">該当する組合せが見つかりませんでした</td></tr>';
-        return;
+    if (totalCount === 0) {
+        container.innerHTML = '<div class="no-result">該当する組み合わせ効果が見つかりませんでした</div>';
     }
-
-    filtered.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.className = `r-${item.rarity}`;
-
-        const timingHtml = item.timingSub 
-            ? `<span class="nowrap">${item.timingMain}</span><span class="sub-info">${item.timingSub}</span>`
-            : `<span class="nowrap">${item.timingMain}</span>`;
-
-        const itemsHtml = item.items.map(i => `<span class="item-tag c-${i.color}">${i.name}</span>`).join(' / ');
-
-        tr.innerHTML = `
-            <td class="sticky-col">${item.effect}</td>
-            <td>${timingHtml}</td>
-            <td class="nowrap val-add">${item.starAdd}</td>
-            <td class="nowrap val-max">${item.max}</td>
-            <td class="combo-name">${item.name}</td>
-            <td>${itemsHtml}</td>
-        `;
-
-        tableBody.appendChild(tr);
-    });
 }
 
-// フィルターボタンイベント
-document.querySelectorAll('#timingFilters .btn-filter').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        document.querySelectorAll('#timingFilters .btn-filter').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        selectedTiming = e.target.dataset.filter;
-        render();
-    });
-});
-
-document.querySelectorAll('#rarityFilters .btn-filter').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        document.querySelectorAll('#rarityFilters .btn-filter').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        selectedRarity = e.target.dataset.filter;
-        render();
-    });
-});
-
-document.getElementById('searchInput').addEventListener('input', render);
+document.getElementById('searchInput').addEventListener('input', renderContent);
 
 // 初回描画
-render();
+renderContent();
 </script>
 </body>
 </html>
