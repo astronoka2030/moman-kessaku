@@ -124,40 +124,53 @@
             box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
         }
 
-        /* 所持組合せエリア */
-        .owned-panel {
+        /* 所持・ソート切り替えコントロールパネル */
+        .control-panel {
             background: #eff6ff;
             border: 1px solid #bfdbfe;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px 12px;
             margin-bottom: 12px;
             max-width: 1000px;
             margin-left: auto;
             margin-right: auto;
-        }
-
-        .owned-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
-        .owned-panel h2 {
-            font-size: 0.95rem;
+        .control-panel .info-text {
+            font-size: 0.8rem;
             font-weight: 700;
             color: #1e40af;
+        }
+
+        .btn-action {
+            background: #ffffff;
+            color: #2563eb;
+            border: 1px solid #93c5fd;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s ease;
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin: 0;
+            gap: 4px;
+        }
+
+        .btn-action:hover {
+            background: #dbeafe;
         }
 
         .btn-reset {
             background: #dc2626;
             color: #ffffff;
             border: none;
-            padding: 4px 10px;
+            padding: 5px 10px;
             border-radius: 6px;
             font-size: 0.75rem;
             font-weight: 700;
@@ -169,79 +182,6 @@
             background: #b91c1c;
         }
 
-        /* 所持コンパクトテーブル */
-        .owned-table-wrapper {
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #93c5fd;
-            max-height: 220px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .owned-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.78rem;
-            table-layout: fixed;
-        }
-
-        .owned-table th {
-            background: #dbeafe;
-            color: #1e40af;
-            font-weight: 700;
-            padding: 6px 6px;
-            position: sticky;
-            top: 0;
-            z-index: 2;
-            text-align: left;
-        }
-
-        .owned-table td {
-            padding: 6px 6px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #1e293b;
-            vertical-align: middle;
-            word-break: break-word;
-        }
-
-        .owned-table th.col-o-name, .owned-table td.col-o-name {
-            width: 95px;
-            font-weight: 700;
-        }
-
-        .owned-table th.col-o-star, .owned-table td.col-o-star {
-            width: 38px;
-            text-align: center;
-            color: #64748b;
-            font-weight: 600;
-        }
-
-        .owned-table th.col-o-timing, .owned-table td.col-o-timing {
-            width: 70px;
-            font-size: 0.7rem;
-            color: #475569;
-        }
-
-        .owned-table th.col-o-eff, .owned-table td.col-o-eff {
-            color: #2563eb;
-            font-weight: 600;
-            line-height: 1.3;
-        }
-
-        .owned-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .owned-empty {
-            font-size: 0.78rem;
-            color: #60a5fa;
-            font-style: italic;
-            padding: 8px;
-            display: block;
-            text-align: center;
-        }
-
         /* メインテーブルコンテナ（横スクロール対応） */
         .table-wrapper {
             background: var(--card-bg);
@@ -250,6 +190,9 @@
             overflow-x: auto;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             -webkit-overflow-scrolling: touch;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         table {
@@ -437,25 +380,11 @@
     <input type="text" id="searchInput" class="search-input" placeholder="組合せ名・傑作名・効果で検索...">
 </div>
 
-<div class="owned-panel">
-    <div class="owned-header">
-        <h2>✔ あなたの所持組合せ一覧</h2>
+<div class="control-panel">
+    <div class="info-text">💡 所持チェックで上位に自動ソートされます</div>
+    <div style="display: flex; gap: 6px;">
+        <button class="btn-action" id="toggleSortBtn">🔄 所持上位ソート: ON</button>
         <button class="btn-reset" id="resetBtn">一括リセット</button>
-    </div>
-    
-    <!-- コンパクトテーブルエリア（発動列付き） -->
-    <div class="owned-table-wrapper" id="ownedTableWrapper">
-        <table class="owned-table">
-            <thead>
-                <tr>
-                    <th class="col-o-name">組合せ</th>
-                    <th class="col-o-star">星</th>
-                    <th class="col-o-timing">発動</th>
-                    <th class="col-o-eff">効果</th>
-                </tr>
-            </thead>
-            <tbody id="ownedTableBody"></tbody>
-        </table>
     </div>
 </div>
 
@@ -477,7 +406,7 @@
 </div>
 
 <script>
-// ゲーム内画面に完全に合わせた並び順（全42件）
+// ゲーム内画面に完全に合わせた初期並び順（全42件）
 const allData = [
     { id: "c1", name: "歴史に名を刻む", rarity: "red", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "最大体力の{val}%分のシールド値を獲得", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "史記", color: "red" }, { name: "資治通鑑", color: "red" }] },
     { id: "c22", name: "孤忠の異聞", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "聊斎志異", color: "red" }, { name: "祭姪文稿", color: "red" }] },
@@ -491,7 +420,7 @@ const allData = [
     { id: "c28", name: "天宇懐沙", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
     { id: "c26", name: "波濤一掃(※未解放)", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "八陣図", color: "red" }, { name: "？？？(※未解放)", color: "red" }] },
     { id: "c32", name: "君臣同心", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "牧誓", color: "red" }, { name: "楊家将", color: "red" }] },
-    { id: "c21", name: "文才墨酔", rarity: "red", timingCategory: "ターン", timingMain: "毎ターン20%", timingSub: "確率は発動", effectTpl: "味方のデバフを1つ解除（傑作デバフ除く）", baseVal: 20, addVal: 7, starAdd: "+7%", max: "83%", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] },
+    { id: "c21", name: "文才墨酔", rarity: "red", timingCategory: "ターン", timingMain: "毎ターン{val}%", timingSub: "確率は発動", effectTpl: "味方のデバフを1つ解除（傑作デバフ除く）", baseVal: 20, addVal: 7, starAdd: "+7%", max: "83%", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] },
     { id: "c31", name: "文武両道", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "三十六計", color: "red" }, { name: "蘭亭序", color: "red" }] },
     { id: "c27", name: "戦略兵鑑", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "三国志演義", color: "red" }, { name: "孫子兵法", color: "red" }] },
     { id: "c35", name: "史詩流芳(※未解放)", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "後漢書", color: "red" }, { name: "？？？", color: "red" }] },
@@ -525,6 +454,7 @@ const allData = [
 const STORAGE_KEY = 'moman_masterpiece_user_state';
 
 let userState = {};
+let isSortByOwned = true; // デフォルト：所持上位ソートON
 
 function initUserState() {
     allData.forEach(item => {
@@ -562,54 +492,13 @@ function calcEffectValue(item) {
     return item.baseVal + (st.star - 1) * item.addVal;
 }
 
-function updateOwnedPanel() {
-    const ownedTableWrapper = document.getElementById('ownedTableWrapper');
-    ownedTableWrapper.innerHTML = '';
-
-    const ownedItems = allData.filter(item => userState[item.id].owned);
-
-    if (ownedItems.length === 0) {
-        ownedTableWrapper.innerHTML = '<span class="owned-empty">チェックボックスにチェックを入れると、ここにまとめ表示されます</span>';
-        return;
-    }
-
-    ownedTableWrapper.innerHTML = `
-        <table class="owned-table">
-            <thead>
-                <tr>
-                    <th class="col-o-name">組合せ</th>
-                    <th class="col-o-star">星</th>
-                    <th class="col-o-timing">発動</th>
-                    <th class="col-o-eff">効果</th>
-                </tr>
-            </thead>
-            <tbody id="ownedTableBody"></tbody>
-        </table>
-    `;
-    const newTbody = document.getElementById('ownedTableBody');
-
-    ownedItems.forEach(item => {
-        const val = calcEffectValue(item);
-        const appliedText = item.effectTpl.replace('{val}', val);
-        const timingShort = item.timingSub ? `${item.timingMain} ${item.timingSub}` : item.timingMain;
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td class="col-o-name">${item.name}</td>
-            <td class="col-o-star">★${userState[item.id].star}</td>
-            <td class="col-o-timing">${timingShort}</td>
-            <td class="col-o-eff">${appliedText}</td>
-        `;
-        newTbody.appendChild(tr);
-    });
-}
-
 function render() {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
     const tableBody = document.getElementById('tableBody');
     tableBody.innerHTML = '';
 
-    const filtered = allData.filter(item => {
+    // 1. フィルタリング
+    let filtered = allData.filter(item => {
         const matchTiming = selectedTiming === 'all' || item.timingCategory === selectedTiming;
         const matchRarity = selectedRarity === 'all' || item.rarity === selectedRarity;
         const matchSearch = item.name.toLowerCase().includes(query) ||
@@ -620,6 +509,19 @@ function render() {
 
         return matchTiming && matchRarity && matchSearch;
     });
+
+    // 2. ソート処理（所持上位ソートONの場合、チェック付きを上部に、かつ元の順番を保持）
+    if (isSortByOwned) {
+        filtered.sort((a, b) => {
+            const aOwned = userState[a.id].owned ? 1 : 0;
+            const bOwned = userState[b.id].owned ? 1 : 0;
+            if (aOwned !== bOwned) {
+                return bOwned - aOwned; // 所持しているものが上
+            }
+            // 所持状態が同じなら元の配列順（インデックス順）を維持
+            return allData.indexOf(a) - allData.indexOf(b);
+        });
+    }
 
     if (filtered.length === 0) {
         tableBody.innerHTML = '<tr><td colspan="7" class="no-result">該当する組合せが見つかりませんでした</td></tr>';
@@ -633,13 +535,21 @@ function render() {
         const st = userState[item.id];
         const currentVal = calcEffectValue(item);
 
+        // 効果テキストの数値置換
         const effectText = st.owned 
             ? item.effectTpl.replace('{val}', `<span class="val-calculated">${currentVal}</span>`)
             : item.effectTpl.replace('{val}', item.baseVal);
 
+        // 「文才墨酔」のように発動側のタイミング文字に {val} が含まれる場合の対応
+        let timingMainText = item.timingMain;
+        if (timingMainText.includes('{val}')) {
+            const valFormatted = st.owned ? `<span class="val-calculated">${currentVal}</span>` : item.baseVal;
+            timingMainText = timingMainText.replace('{val}', valFormatted);
+        }
+
         const timingHtml = item.timingSub 
-            ? `<span class="nowrap">${item.timingMain}</span><span class="sub-info">${item.timingSub}</span>`
-            : `<span class="nowrap">${item.timingMain}</span>`;
+            ? `<span class="nowrap">${timingMainText}</span><span class="sub-info">${item.timingSub}</span>`
+            : `<span class="nowrap">${timingMainText}</span>`;
 
         const itemsHtml = item.items.map(i => `<span class="item-tag c-${i.color}">${i.name}</span>`).join(' / ');
 
@@ -661,17 +571,17 @@ function render() {
         tableBody.appendChild(tr);
     });
 
-    // イベントバインド
+    // イベントバインド：チェックボックス
     document.querySelectorAll('.own-checkbox').forEach(cb => {
         cb.addEventListener('change', (e) => {
             const id = e.target.dataset.id;
             userState[id].owned = e.target.checked;
             saveUserState();
             render();
-            updateOwnedPanel();
         });
     });
 
+    // イベントバインド：星数入力
     document.querySelectorAll('.star-input').forEach(input => {
         input.addEventListener('change', (e) => {
             const id = e.target.dataset.id;
@@ -681,10 +591,23 @@ function render() {
             userState[id].star = val;
             saveUserState();
             render();
-            updateOwnedPanel();
         });
     });
 }
+
+// ソート切り替えボタンイベント
+const toggleSortBtn = document.getElementById('toggleSortBtn');
+toggleSortBtn.addEventListener('click', () => {
+    isSortByOwned = !isSortByOwned;
+    if (isSortByOwned) {
+        toggleSortBtn.textContent = '🔄 所持上位ソート: ON';
+        toggleSortBtn.style.background = '#eff6ff';
+    } else {
+        toggleSortBtn.textContent = '🔄 所持上位ソート: OFF';
+        toggleSortBtn.style.background = '#f1f5f9';
+    }
+    render();
+});
 
 // フィルターボタンイベント
 document.querySelectorAll('#timingFilters .btn-filter').forEach(btn => {
@@ -715,14 +638,12 @@ document.getElementById('resetBtn').addEventListener('click', () => {
         });
         saveUserState();
         render();
-        updateOwnedPanel();
     }
 });
 
 // 初期化＆描画
 initUserState();
 render();
-updateOwnedPanel();
 </script>
 </body>
 </html>
