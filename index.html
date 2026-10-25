@@ -169,48 +169,7 @@
             background: #b91c1c;
         }
 
-        /* 合計ステータスサマリー */
-        .summary-wrapper {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-
-        .summary-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #1e40af;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .summary-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-
-        .summary-badge {
-            background: #f1f5f9;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 3px 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #334155;
-            line-height: 1.3;
-        }
-
-        .summary-badge .val {
-            color: #2563eb;
-            font-weight: 700;
-        }
-
-        /* 所持コンパクトテーブル（「発動」列追加に対応） */
+        /* 所持コンパクトテーブル */
         .owned-table-wrapper {
             background: #ffffff;
             border-radius: 8px;
@@ -283,7 +242,7 @@
             text-align: center;
         }
 
-        /* テーブルコンテナ（横スクロール対応） */
+        /* メインテーブルコンテナ（横スクロール対応） */
         .table-wrapper {
             background: var(--card-bg);
             border-radius: 12px;
@@ -484,13 +443,7 @@
         <button class="btn-reset" id="resetBtn">一括リセット</button>
     </div>
     
-    <!-- 合計ステータスサマリーエリア -->
-    <div class="summary-wrapper" id="summaryWrapper" style="display: none;">
-        <div class="summary-title">📊 所持効果の合計ステータス</div>
-        <div class="summary-box" id="summaryBox"></div>
-    </div>
-
-    <!-- コンパクトテーブルエリア（「発動」列追加） -->
+    <!-- コンパクトテーブルエリア（発動列付き） -->
     <div class="owned-table-wrapper" id="ownedTableWrapper">
         <table class="owned-table">
             <thead>
@@ -610,22 +563,16 @@ function calcEffectValue(item) {
 }
 
 function updateOwnedPanel() {
-    const summaryWrapper = document.getElementById('summaryWrapper');
-    const summaryBox = document.getElementById('summaryBox');
     const ownedTableWrapper = document.getElementById('ownedTableWrapper');
-    
-    summaryBox.innerHTML = '';
     ownedTableWrapper.innerHTML = '';
 
     const ownedItems = allData.filter(item => userState[item.id].owned);
 
     if (ownedItems.length === 0) {
-        summaryWrapper.style.display = 'none';
         ownedTableWrapper.innerHTML = '<span class="owned-empty">チェックボックスにチェックを入れると、ここにまとめ表示されます</span>';
         return;
     }
 
-    summaryWrapper.style.display = 'block';
     ownedTableWrapper.innerHTML = `
         <table class="owned-table">
             <thead>
@@ -641,33 +588,11 @@ function updateOwnedPanel() {
     `;
     const newTbody = document.getElementById('ownedTableBody');
 
-    // 合計対象の効果のみを集計
-    let sumData = {
-        dmgBuff: 0,
-        dmgRed: 0,
-        shield: 0,
-        enemyDmgRedDec: 0,
-        enemyDmgBuffDec: 0
-    };
-
     ownedItems.forEach(item => {
         const val = calcEffectValue(item);
         const appliedText = item.effectTpl.replace('{val}', val);
-
-        if (item.effectTpl.includes("味方のダメージバフ+")) {
-            sumData.dmgBuff += val;
-        } else if (item.effectTpl.includes("味方のダメージ軽減+")) {
-            sumData.dmgRed += val;
-        } else if (item.effectTpl.includes("シールド値を獲得")) {
-            sumData.shield += val;
-        } else if (item.effectTpl.includes("敵の最終的な総ダメージ軽減効果-")) {
-            sumData.enemyDmgRedDec += val;
-        } else if (item.effectTpl.includes("敵の最終的な総ダメージバフ効果-")) {
-            sumData.enemyDmgBuffDec += val;
-        }
-
-        // コンパクト表の描画（「発動」列を追加）
         const timingShort = item.timingSub ? `${item.timingMain} ${item.timingSub}` : item.timingMain;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="col-o-name">${item.name}</td>
@@ -677,28 +602,6 @@ function updateOwnedPanel() {
         `;
         newTbody.appendChild(tr);
     });
-
-    // 合計値のあるものだけサマリーバッジとして表示
-    if (sumData.dmgBuff > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">味方ダメバフ合計: <span class="val">+${sumData.dmgBuff}%</span></div>`;
-    }
-    if (sumData.dmgRed > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">味方ダメ軽減合計: <span class="val">+${sumData.dmgRed}%</span></div>`;
-    }
-    if (sumData.shield > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">開幕シールド合計: <span class="val">${sumData.shield}%</span></div>`;
-    }
-    if (sumData.enemyDmgRedDec > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">敵ダメ軽減低下合計: <span class="val">-${sumData.enemyDmgRedDec}%</span></div>`;
-    }
-    if (sumData.enemyDmgBuffDec > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">敵ダメバフ低下合計: <span class="val">-${sumData.enemyDmgBuffDec}%</span></div>`;
-    }
-
-    // もし合計対象が1つも持たれていない場合は所持数を表示
-    if (summaryBox.innerHTML === '') {
-        summaryBox.innerHTML = `<div class="summary-badge">所持数: <span class="val">${ownedItems.length}個</span></div>`;
-    }
 }
 
 function render() {
