@@ -210,7 +210,7 @@
             font-weight: 700;
         }
 
-        /* 所持コンパクトテーブル */
+        /* 所持コンパクトテーブル（「発動」列追加に対応） */
         .owned-table-wrapper {
             background: #ffffff;
             border-radius: 8px;
@@ -247,15 +247,21 @@
         }
 
         .owned-table th.col-o-name, .owned-table td.col-o-name {
-            width: 105px;
+            width: 95px;
             font-weight: 700;
         }
 
         .owned-table th.col-o-star, .owned-table td.col-o-star {
-            width: 45px;
+            width: 38px;
             text-align: center;
             color: #64748b;
             font-weight: 600;
+        }
+
+        .owned-table th.col-o-timing, .owned-table td.col-o-timing {
+            width: 70px;
+            font-size: 0.7rem;
+            color: #475569;
         }
 
         .owned-table th.col-o-eff, .owned-table td.col-o-eff {
@@ -484,13 +490,14 @@
         <div class="summary-box" id="summaryBox"></div>
     </div>
 
-    <!-- コンパクトテーブルエリア -->
+    <!-- コンパクトテーブルエリア（「発動」列追加） -->
     <div class="owned-table-wrapper" id="ownedTableWrapper">
         <table class="owned-table">
             <thead>
                 <tr>
                     <th class="col-o-name">組合せ</th>
                     <th class="col-o-star">星</th>
+                    <th class="col-o-timing">発動</th>
                     <th class="col-o-eff">効果</th>
                 </tr>
             </thead>
@@ -625,6 +632,7 @@ function updateOwnedPanel() {
                 <tr>
                     <th class="col-o-name">組合せ</th>
                     <th class="col-o-star">星</th>
+                    <th class="col-o-timing">発動</th>
                     <th class="col-o-eff">効果</th>
                 </tr>
             </thead>
@@ -633,7 +641,7 @@ function updateOwnedPanel() {
     `;
     const newTbody = document.getElementById('ownedTableBody');
 
-    // 2. 所持しているすべての効果を自動集計＆単品表示するロジック
+    // 合計対象の効果のみを集計
     let sumData = {
         dmgBuff: 0,
         dmgRed: 0,
@@ -641,13 +649,11 @@ function updateOwnedPanel() {
         enemyDmgRedDec: 0,
         enemyDmgBuffDec: 0
     };
-    let singleEffects = [];
 
     ownedItems.forEach(item => {
         const val = calcEffectValue(item);
         const appliedText = item.effectTpl.replace('{val}', val);
 
-        // 合計対象の数値抽出キーワード判定
         if (item.effectTpl.includes("味方のダメージバフ+")) {
             sumData.dmgBuff += val;
         } else if (item.effectTpl.includes("味方のダメージ軽減+")) {
@@ -658,22 +664,21 @@ function updateOwnedPanel() {
             sumData.enemyDmgRedDec += val;
         } else if (item.effectTpl.includes("敵の最終的な総ダメージバフ効果-")) {
             sumData.enemyDmgBuffDec += val;
-        } else {
-            // 合計値を持たない（または個別効果の）ものは単品として登録
-            singleEffects.push({ name: item.name, text: appliedText });
         }
 
-        // コンパクト表の描画
+        // コンパクト表の描画（「発動」列を追加）
+        const timingShort = item.timingSub ? `${item.timingMain} ${item.timingSub}` : item.timingMain;
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="col-o-name">${item.name}</td>
             <td class="col-o-star">★${userState[item.id].star}</td>
+            <td class="col-o-timing">${timingShort}</td>
             <td class="col-o-eff">${appliedText}</td>
         `;
         newTbody.appendChild(tr);
     });
 
-    // 合計値バッジの生成
+    // 合計値のあるものだけサマリーバッジとして表示
     if (sumData.dmgBuff > 0) {
         summaryBox.innerHTML += `<div class="summary-badge">味方ダメバフ合計: <span class="val">+${sumData.dmgBuff}%</span></div>`;
     }
@@ -690,10 +695,10 @@ function updateOwnedPanel() {
         summaryBox.innerHTML += `<div class="summary-badge">敵ダメバフ低下合計: <span class="val">-${sumData.enemyDmgBuffDec}%</span></div>`;
     }
 
-    // 単品効果もバッジとしてサマリーエリアに並べる
-    singleEffects.forEach(se => {
-        summaryBox.innerHTML += `<div class="summary-badge">${se.name}: <span class="val">${se.text}</span></div>`;
-    });
+    // もし合計対象が1つも持たれていない場合は所持数を表示
+    if (summaryBox.innerHTML === '') {
+        summaryBox.innerHTML = `<div class="summary-badge">所持数: <span class="val">${ownedItems.length}個</span></div>`;
+    }
 }
 
 function render() {
