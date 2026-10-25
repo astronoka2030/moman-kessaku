@@ -170,15 +170,28 @@
         }
 
         /* 合計ステータスサマリー */
+        .summary-wrapper {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        .summary-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
         .summary-box {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-bottom: 10px;
-            padding: 8px;
-            background: #ffffff;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
         }
 
         .summary-badge {
@@ -189,6 +202,7 @@
             font-size: 0.75rem;
             font-weight: 600;
             color: #334155;
+            line-height: 1.3;
         }
 
         .summary-badge .val {
@@ -464,8 +478,11 @@
         <button class="btn-reset" id="resetBtn">一括リセット</button>
     </div>
     
-    <!-- 合計サマリーエリア -->
-    <div class="summary-box" id="summaryBox"></div>
+    <!-- 合計ステータスサマリーエリア -->
+    <div class="summary-wrapper" id="summaryWrapper" style="display: none;">
+        <div class="summary-title">📊 所持効果の合計ステータス</div>
+        <div class="summary-box" id="summaryBox"></div>
+    </div>
 
     <!-- コンパクトテーブルエリア -->
     <div class="owned-table-wrapper" id="ownedTableWrapper">
@@ -500,7 +517,7 @@
 </div>
 
 <script>
-// ゲーム内画面に完全に合わせた並び順（1〜42）
+// ゲーム内画面に完全に合わせた並び順（全42件）
 const allData = [
     { id: "c1", name: "歴史に名を刻む", rarity: "red", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "最大体力の{val}%分のシールド値を獲得", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "史記", color: "red" }, { name: "資治通鑑", color: "red" }] },
     { id: "c22", name: "孤忠の異聞", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "聊斎志異", color: "red" }, { name: "祭姪文稿", color: "red" }] },
@@ -512,30 +529,30 @@ const allData = [
     { id: "c33", name: "龍韜虎略", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "六韜", color: "red" }, { name: "三略", color: "red" }] },
     { id: "c25", name: "山河絵の如し", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "天啓録", color: "red" }, { name: "千里江山図", color: "red" }] },
     { id: "c28", name: "天宇懐沙", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "念奴嬌", color: "red" }, { name: "山海経", color: "red" }] },
-    { id: "c26", name: "波濤一掃", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "八陣図", color: "red" }, { name: "？？？", color: "red" }] },
+    { id: "c26", name: "波濤一掃(※未解放)", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "八陣図", color: "red" }, { name: "？？？(※未解放)", color: "red" }] },
     { id: "c32", name: "君臣同心", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "牧誓", color: "red" }, { name: "楊家将", color: "red" }] },
-    { id: "c21", name: "文才墨粋", rarity: "red", timingCategory: "ターン", timingMain: "毎ターン20%", timingSub: "確率は発動", effectTpl: "味方のデバフを1つ解除（傑作デバフ除く）", baseVal: 20, addVal: 7, starAdd: "+7%", max: "83%", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] },
+    { id: "c21", name: "文才墨酔", rarity: "red", timingCategory: "ターン", timingMain: "毎ターン20%", timingSub: "確率は発動", effectTpl: "味方のデバフを1つ解除（傑作デバフ除く）", baseVal: 20, addVal: 7, starAdd: "+7%", max: "83%", items: [{ name: "出師表", color: "red" }, { name: "楚辞", color: "red" }] },
     { id: "c31", name: "文武両道", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "三十六計", color: "red" }, { name: "蘭亭序", color: "red" }] },
     { id: "c27", name: "戦略兵鑑", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージバフ+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "三国志演義", color: "red" }, { name: "孫子兵法", color: "red" }] },
-    { id: "c35", name: "史詩流芳", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "後漢書", color: "red" }, { name: "？？？", color: "red" }] },
+    { id: "c35", name: "史詩流芳(※未解放)", rarity: "red", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 20, addVal: 10, starAdd: "+10%", max: "110%", items: [{ name: "後漢書", color: "red" }, { name: "？？？", color: "red" }] },
     { id: "c41", name: "詩歌管弦", rarity: "yellow", timingCategory: "条件", timingMain: "最大HP超え", timingSub: "回復時", effectTpl: "超過分の{val}%をシールド値に変換", baseVal: 10, addVal: 5, starAdd: "+5%", max: "55%", items: [{ name: "孔雀東南飛", color: "yellow" }, { name: "木欄詩", color: "yellow" }, { name: "春江花月夜", color: "purple" }, { name: "待ち伏せ", color: "purple" }] },
     { id: "c8", name: "天下を制す", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵の最終的な総ダメージ軽減効果-{val}%", baseVal: 12, addVal: 3, starAdd: "-3%", max: "-39%", items: [{ name: "漢書", color: "yellow" }, { name: "天工開物", color: "yellow" }, { name: "水経注", color: "yellow" }, { name: "戦国策", color: "yellow" }] },
     { id: "c7", name: "諸子の聖言", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵の最終的な総ダメージバフ効果-{val}%", baseVal: 12, addVal: 3, starAdd: "-3%", max: "-39%", items: [{ name: "世説新語", color: "yellow" }, { name: "孟子", color: "yellow" }, { name: "荘子", color: "yellow" }, { name: "墨子", color: "yellow" }] },
     { id: "c10", name: "伝説の春秋", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵の最終的な総ダメージ軽減効果-{val}%", baseVal: 5, addVal: 2, starAdd: "-2%", max: "-23%", items: [{ name: "覇王別姫", color: "yellow" }, { name: "白蛇伝", color: "yellow" }, { name: "呂氏春秋", color: "purple" }, { name: "伝習録", color: "purple" }] },
     { id: "c9", name: "膾炙人口", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵の最終的な総ダメージバフ効果-{val}%", baseVal: 5, addVal: 2, starAdd: "-2%", max: "-23%", items: [{ name: "櫟林英掛飾", color: "yellow" }, { name: "天仙配", color: "yellow" }, { name: "儒林外史", color: "purple" }, { name: "容斎随筆", color: "purple" }] },
     { id: "c4", name: "文学の精華", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "{val}%の攻撃低下耐性を獲得（自身の攻撃力は最大10%まで低下）", baseVal: 10, addVal: 5, starAdd: "+5%", max: "55%", items: [{ name: "葬花", color: "yellow" }, { name: "勅勒歌", color: "yellow" }, { name: "群英会", color: "purple" }, { name: "永楽大典", color: "purple" }] },
-    { id: "c5", name: "悲喜こもごも", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵を攻撃する際に削る装甲値+{val}%", baseVal: 10, addVal: 5, starAdd: "+5%", max: "55%", items: [{ name: "入陣曲", color: "yellow" }, { name: "竇娥冤", color: "yellow" }, { name: "西遊記", color: "yellow" }, { name: "牡丹亭", color: "yellow" }] },
-    { id: "c6", name: "芸術界の至宝", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "攻撃を受けた際に減少する装甲値-{val}%", baseVal: 10, addVal: 5, starAdd: "-5%", max: "-55%", items: [{ name: "紫荊花", color: "yellow" }, { name: "洛神賦図", color: "yellow" }, { name: "百駿図", color: "yellow" }, { name: "胡旋舞", color: "yellow" }] },
     { id: "c20", name: "書剣双絶", rarity: "yellow", timingCategory: "ターン", timingMain: "2ターンごと", timingSub: "(HP50%以上)", effectTpl: "敵に現在の体力の{val}%のダメージ", baseVal: 2, addVal: 1, starAdd: "+1%", max: "11%", items: [{ name: "観滄海", color: "yellow" }, { name: "満江紅", color: "yellow" }, { name: "梅花三弄", color: "purple" }, { name: "陽関三畳", color: "purple" }] },
     { id: "c42", name: "絵画の名手", rarity: "yellow", timingCategory: "条件", timingMain: "威率が敵より上", timingSub: "", effectTpl: "敵に攻撃力の{val}%のダメージ", baseVal: 100, addVal: 20, starAdd: "+20%", max: "280%", items: [{ name: "水調歌頭", color: "yellow" }, { name: "女史箴図", color: "purple" }, { name: "富春山居図", color: "purple" }, { name: "五牛図", color: "purple" }] },
     { id: "c11", name: "風雅山水", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵の回復弱体化+{val}%", baseVal: 10, addVal: 4, starAdd: "+4%", max: "46%", items: [{ name: "将進酒", color: "yellow" }, { name: "芙蓉錦鶏図", color: "purple" }, { name: "渓山行旅図", color: "purple" }, { name: "剣器舞", color: "purple" }] },
-    { id: "c39", name: "玉振金声", rarity: "yellow", timingCategory: "条件", timingMain: "敵クリティカル", timingSub: "時発動", effectTpl: "受けるダメージが-{val}%", baseVal: 8, addVal: 3, starAdd: "-3%", max: "-35%", items: [{ name: "登高", color: "yellow" }, { name: "蜀道難", color: "yellow" }, { name: "塩鉄論", color: "purple" }, { name: "朱元思へ", color: "purple" }] },
     { id: "c36", name: "温陵雅趣", rarity: "yellow", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 6, addVal: 3, starAdd: "+3%", max: "33%", items: [{ name: "落龍滂", color: "yellow" }, { name: "四時景", color: "yellow" }, { name: "芭蕉記", color: "yellow" }] },
     { id: "c3", name: "解釈と訓詁", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "最大体力の{val}%分のシールド値を獲得", baseVal: 10, addVal: 5, starAdd: "+5%", max: "55%", items: [{ name: "左伝", color: "yellow" }, { name: "礼記", color: "yellow" }, { name: "尚書", color: "yellow" }, { name: "夢渓筆談", color: "yellow" }] },
     { id: "c37", name: "経世済民", rarity: "yellow", timingCategory: "パッシブ", timingMain: "パッシブ", timingSub: "", effectTpl: "味方の特殊ダメージ軽減+{val}%（反撃/跳ね返し/異常ダメージ-10%）", baseVal: 10, addVal: 4, starAdd: "+4%", max: "46%", items: [{ name: "三字経", color: "yellow" }, { name: "春秋", color: "yellow" }, { name: "斉民要術", color: "yellow" }, { name: "海国図志", color: "yellow" }] },
     { id: "c40", name: "千古の名曲", rarity: "yellow", timingCategory: "条件", timingMain: "被ダメージ時", timingSub: "(吸収)", effectTpl: "敵がダメージを吸収する際の吸収量-{val}%", baseVal: 15, addVal: 5, starAdd: "-5%", max: "-60%", items: [{ name: "岳陽楼記", color: "yellow" }, { name: "桃花源記", color: "yellow" }, { name: "阿房宮賦", color: "yellow" }, { name: "赤壁賦", color: "yellow" }] },
     { id: "c2", name: "文昭の濁世", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "最大体力の{val}%分のシールド値を獲得", baseVal: 10, addVal: 5, starAdd: "+5%", max: "55%", items: [{ name: "陳情表", color: "yellow" }, { name: "滕王閣序", color: "yellow" }, { name: "師説", color: "yellow" }, { name: "愛蓮説", color: "yellow" }] },
     { id: "c38", name: "雅楽正声", rarity: "yellow", timingCategory: "条件", timingMain: "1ターン複数回", timingSub: "被弾時", effectTpl: "最初のダメージを除き残りのダメージは{val}%吸収", baseVal: 5, addVal: 1, starAdd: "+1%", max: "14%", items: [{ name: "陋室銘", color: "yellow" }, { name: "霓裳曲", color: "yellow" }, { name: "高山流水", color: "yellow" }, { name: "秦王破陣楽", color: "yellow" }] },
+    { id: "c6", name: "芸術界の至宝", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "攻撃を受けた際に減少する装甲値-{val}%", baseVal: 10, addVal: 5, starAdd: "-5%", max: "-55%", items: [{ name: "紫荊花", color: "yellow" }, { name: "洛神賦図", color: "yellow" }, { name: "百駿図", color: "yellow" }, { name: "胡旋舞", color: "yellow" }] },
+    { id: "c5", name: "悲喜こもごも", rarity: "yellow", timingCategory: "開戦時", timingMain: "戦闘開始時", timingSub: "", effectTpl: "敵を攻撃する際に削る装甲値+{val}%", baseVal: 10, addVal: 5, starAdd: "+5%", max: "55%", items: [{ name: "入陣曲", color: "yellow" }, { name: "竇娥冤", color: "yellow" }, { name: "西遊記", color: "yellow" }, { name: "牡丹亭", color: "yellow" }] },
+    { id: "c39", name: "玉振金声", rarity: "yellow", timingCategory: "条件", timingMain: "敵クリティカル", timingSub: "時発動", effectTpl: "受けるダメージが-{val}%", baseVal: 8, addVal: 3, starAdd: "-3%", max: "-35%", items: [{ name: "登高", color: "yellow" }, { name: "蜀道難", color: "yellow" }, { name: "塩鉄論", color: "purple" }, { name: "朱元思へ", color: "purple" }] },
     { id: "c12", name: "学養礼備", rarity: "purple", timingCategory: "ターン", timingMain: "3ターンごと", timingSub: "(2ターン持続)", effectTpl: "味方のダメージ軽減+{val}%", baseVal: 5, addVal: 3, starAdd: "+3%", max: "32%", items: [{ name: "長恨歌", color: "purple" }, { name: "徐霞客遊記", color: "purple" }, { name: "歩輦図", color: "cyan" }, { name: "漢宮春暁図", color: "cyan" }] },
     { id: "c17", name: "霓裳羽衣", rarity: "purple", timingCategory: "ターン", timingMain: "4ターンごと", timingSub: "", effectTpl: "敵に攻撃力の{val}%のダメージ", baseVal: 80, addVal: 12, starAdd: "+12%", max: "188%", items: [{ name: "盤鼓の舞", color: "purple" }, { name: "獅子舞", color: "purple" }, { name: "長生殿", color: "purple" }, { name: "桃花扇", color: "purple" }] },
     { id: "c13", name: "大音は希声なり", rarity: "purple", timingCategory: "ターン", timingMain: "3ターンごと", timingSub: "(2ターン持続)", effectTpl: "味方のダメージバフ+{val}%", baseVal: 5, addVal: 3, starAdd: "+3%", max: "32%", items: [{ name: "登幽州台歌", color: "purple" }, { name: "琵琶行", color: "purple" }, { name: "漁舟唱晩", color: "cyan" }, { name: "平沙落雁", color: "cyan" }] },
@@ -545,7 +562,6 @@ const allData = [
     { id: "c18", name: "弄文舞墨", rarity: "cyan", timingCategory: "ターン", timingMain: "6ターン目", timingSub: "", effectTpl: "味方の最大体力の{val}%分回復", baseVal: 5, addVal: 1, starAdd: "+1%", max: "14%", items: [{ name: "報任安書", color: "cyan" }, { name: "五柳先生伝", color: "cyan" }, { name: "孔雀の舞", color: "cyan" }, { name: "雷峰塔", color: "cyan" }] },
     { id: "c15", name: "文学談義", rarity: "cyan", timingCategory: "ターン", timingMain: "4ターン目", timingSub: "(2ターン持続)", effectTpl: "味方のダメージバフ+{val}%", baseVal: 5, addVal: 3, starAdd: "+3%", max: "32%", items: [{ name: "諫逐客書", color: "cyan" }, { name: "女尉馬", color: "cyan" }, { name: "打金枝", color: "cyan" }, { name: "納蘭詞集", color: "cyan" }] }
 ];
-
 const STORAGE_KEY = 'moman_masterpiece_user_state';
 
 let userState = {};
@@ -587,6 +603,7 @@ function calcEffectValue(item) {
 }
 
 function updateOwnedPanel() {
+    const summaryWrapper = document.getElementById('summaryWrapper');
     const summaryBox = document.getElementById('summaryBox');
     const ownedTableWrapper = document.getElementById('ownedTableWrapper');
     
@@ -596,12 +613,12 @@ function updateOwnedPanel() {
     const ownedItems = allData.filter(item => userState[item.id].owned);
 
     if (ownedItems.length === 0) {
-        summaryBox.style.display = 'none';
+        summaryWrapper.style.display = 'none';
         ownedTableWrapper.innerHTML = '<span class="owned-empty">チェックボックスにチェックを入れると、ここにまとめ表示されます</span>';
         return;
     }
 
-    summaryBox.style.display = 'flex';
+    summaryWrapper.style.display = 'block';
     ownedTableWrapper.innerHTML = `
         <table class="owned-table">
             <thead>
@@ -616,22 +633,34 @@ function updateOwnedPanel() {
     `;
     const newTbody = document.getElementById('ownedTableBody');
 
-    // 1. サマリー（合計値）計算
-    let totalDmgBuff = 0;
-    let totalDmgRed = 0;
-    let totalShield = 0;
-    let totalEnemyDmgRedDec = 0;
+    // 2. 所持しているすべての効果を自動集計＆単品表示するロジック
+    let sumData = {
+        dmgBuff: 0,
+        dmgRed: 0,
+        shield: 0,
+        enemyDmgRedDec: 0,
+        enemyDmgBuffDec: 0
+    };
+    let singleEffects = [];
 
     ownedItems.forEach(item => {
         const val = calcEffectValue(item);
+        const appliedText = item.effectTpl.replace('{val}', val);
+
+        // 合計対象の数値抽出キーワード判定
         if (item.effectTpl.includes("味方のダメージバフ+")) {
-            totalDmgBuff += val;
+            sumData.dmgBuff += val;
         } else if (item.effectTpl.includes("味方のダメージ軽減+")) {
-            totalDmgRed += val;
+            sumData.dmgRed += val;
         } else if (item.effectTpl.includes("シールド値を獲得")) {
-            totalShield += val;
+            sumData.shield += val;
         } else if (item.effectTpl.includes("敵の最終的な総ダメージ軽減効果-")) {
-            totalEnemyDmgRedDec += val;
+            sumData.enemyDmgRedDec += val;
+        } else if (item.effectTpl.includes("敵の最終的な総ダメージバフ効果-")) {
+            sumData.enemyDmgBuffDec += val;
+        } else {
+            // 合計値を持たない（または個別効果の）ものは単品として登録
+            singleEffects.push({ name: item.name, text: appliedText });
         }
 
         // コンパクト表の描画
@@ -639,33 +668,32 @@ function updateOwnedPanel() {
         tr.innerHTML = `
             <td class="col-o-name">${item.name}</td>
             <td class="col-o-star">★${userState[item.id].star}</td>
-            <td class="col-o-eff">${item.effectTpl.replace('{val}', val)}</td>
+            <td class="col-o-eff">${appliedText}</td>
         `;
         newTbody.appendChild(tr);
     });
 
-    // サマリーバッジの追加
-    let hasSummary = false;
-    if (totalDmgBuff > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">味方ダメバフ: <span class="val">+${totalDmgBuff}%</span></div>`;
-        hasSummary = true;
+    // 合計値バッジの生成
+    if (sumData.dmgBuff > 0) {
+        summaryBox.innerHTML += `<div class="summary-badge">味方ダメバフ合計: <span class="val">+${sumData.dmgBuff}%</span></div>`;
     }
-    if (totalDmgRed > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">味方ダメ軽減: <span class="val">+${totalDmgRed}%</span></div>`;
-        hasSummary = true;
+    if (sumData.dmgRed > 0) {
+        summaryBox.innerHTML += `<div class="summary-badge">味方ダメ軽減合計: <span class="val">+${sumData.dmgRed}%</span></div>`;
     }
-    if (totalShield > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">開幕シールド: <span class="val">${totalShield}%</span></div>`;
-        hasSummary = true;
+    if (sumData.shield > 0) {
+        summaryBox.innerHTML += `<div class="summary-badge">開幕シールド合計: <span class="val">${sumData.shield}%</span></div>`;
     }
-    if (totalEnemyDmgRedDec > 0) {
-        summaryBox.innerHTML += `<div class="summary-badge">敵ダメ軽減低下: <span class="val">-${totalEnemyDmgRedDec}%</span></div>`;
-        hasSummary = true;
+    if (sumData.enemyDmgRedDec > 0) {
+        summaryBox.innerHTML += `<div class="summary-badge">敵ダメ軽減低下合計: <span class="val">-${sumData.enemyDmgRedDec}%</span></div>`;
+    }
+    if (sumData.enemyDmgBuffDec > 0) {
+        summaryBox.innerHTML += `<div class="summary-badge">敵ダメバフ低下合計: <span class="val">-${sumData.enemyDmgBuffDec}%</span></div>`;
     }
 
-    if (!hasSummary) {
-        summaryBox.innerHTML = `<div class="summary-badge">所持数: <span class="val">${ownedItems.length}個</span></div>`;
-    }
+    // 単品効果もバッジとしてサマリーエリアに並べる
+    singleEffects.forEach(se => {
+        summaryBox.innerHTML += `<div class="summary-badge">${se.name}: <span class="val">${se.text}</span></div>`;
+    });
 }
 
 function render() {
