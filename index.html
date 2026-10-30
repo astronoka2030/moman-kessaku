@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z1ZB4YDVBG"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Z1ZB4YDVBG');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>モーマンタイム 傑作組合せ効果一覧</title>
-
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-H1Z9NHRJ19"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-H1Z9NHRJ19');
-</script>
-
     <style>
         :root {
             --bg-color: #f8fafc;
@@ -24,9 +23,9 @@
             --border-color: #e2e8f0;
             --primary-blue: #2563eb;
             
-            /* レア度・品質別カラー */
+            /* レア度・品質別カラー（金品の枠を明るいイエローに変更） */
             --rarity-red: #ef4444;
-            --rarity-yellow: #ca8a04;
+            --rarity-yellow: #eab308; /* ←ここを明るいイエローに変更しました */
             --rarity-purple: #9333ea;
             --rarity-cyan: #0891b2;
         }
@@ -519,7 +518,7 @@ function render() {
             if (aOwned !== bOwned) {
                 return bOwned - aOwned; // 所持しているものが上
             }
-            // 所持状態が同じなら元の配列順（インデックス順）を維持
+            // 所持状態が同じなら元の配列順を維持
             return allData.indexOf(a) - allData.indexOf(b);
         });
     }
@@ -541,7 +540,7 @@ function render() {
             ? item.effectTpl.replace('{val}', `<span class="val-calculated">${currentVal}</span>`)
             : item.effectTpl.replace('{val}', item.baseVal);
 
-        // 「文才墨酔」のように発動側のタイミング文字に {val} が含まれる場合の対応
+        // 「文才墨酔」などの発動タイミング側の数値変動対応
         let timingMainText = item.timingMain;
         if (timingMainText.includes('{val}')) {
             const valFormatted = st.owned ? `<span class="val-calculated">${currentVal}</span>` : item.baseVal;
